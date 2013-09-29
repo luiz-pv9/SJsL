@@ -183,7 +183,7 @@
 	Array.prototype.insertAt = function(index, e) {
 		this.splice(index, 0, e);
 		return this;
-	};
+	}
 
 	Array.prototype.unshift = function(e) {
 		return this.insertAt(0, e);

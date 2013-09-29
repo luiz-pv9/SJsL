@@ -2,7 +2,7 @@
 	'use strict';
 
 	// --
-	// All those functions work as an array of objects
+	// All those functions work with an array of objects
 	// --
 
 	// Given an attribute, returns an array with all the values extracted from the objects
@@ -31,7 +31,7 @@
 
 	Array.prototype.reduce = Array.prototype.foldLeft;
 
-	Array.prototype.filter = function(fn) {
+	Array.prototype.search = function(fn) {
 		var list = [];
 		this.each(function(e) {
 			if(fn(e)) {

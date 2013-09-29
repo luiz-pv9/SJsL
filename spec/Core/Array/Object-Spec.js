@@ -24,4 +24,23 @@ describe("Core / Array / Object", function() {
 		expect(arr[0].c).toEqual(20);
 	});
 
+	it("filters the array", function() {
+		var arr = array.filter(function(e) {
+			return e.a > 10;
+		});
+
+		expect(arr.length).toEqual(2);
+	});
+
+	it("groups by a value of the object in the array", function() {
+		var list = [
+			{group: 'a', ni: 10},
+			{group: 'b', ni: 15},
+			{group: 'b', ni: 20},
+			{group: 'a', ni: 20}
+		];
+		
+		expect(list.outNested('group').a.length).toEqual(2);
+	});
+
 });
