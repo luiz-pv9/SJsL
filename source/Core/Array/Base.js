@@ -21,7 +21,7 @@
 	// Runs the native javascript sortBy - it changes the original array!!
 	// Parameter (attr) is the attribute to sort the array by.
 	// If a minus sign ("-") is passed in fron of the attribute - for example "-name",
-	// the array will be sorted in reverse order by the name
+	// the array will be sorted in reverse order by the attribute
 	Array.prototype.nativeSortBy = function(attr) {
 		var dynamicSort = function(attr) {
 			var sortOrder = 1;
