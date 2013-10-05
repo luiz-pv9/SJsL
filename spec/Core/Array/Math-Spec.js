@@ -1,28 +1,23 @@
 describe("Core / Array / Math", function() {
 
-	it("finds the sum of all the elements in the array", function() {
-		var list = [1, 2, 3];
-		expect(list.sum()).toEqual(6);
+	it("average", function() {
+		expect([1,2,3,4].average()).toEqual(2.5);
 	});
 
-	it("finds the average of all elements in the array", function() {
-		var list = [1, 2, 3, 4];
-		expect(list.average()).toEqual(2.5);
+	it("sum", function() {
+		expect([1,2,3,4].sum()).toEqual(10);
 	});
 
-	it("finds the max value in the array", function() {
-		var list = [1, 2, 3, 4];
-		expect(list.max()).toEqual(4);
+	it("product", function() {
+		expect([2,2,3].product()).toEqual(12);
 	});
 
-	it("finds the min value in the array", function() {
-		var list = [1, 3, 5, 3, -1, 5];
-		expect(list.min()).toEqual(-1);
+	it("max", function() {
+		expect([1,2,5,3,4].max()).toEqual(5);
 	});
 
-	it("finds the product of all elements in the array", function() {
-		var list = [1, 2, 3, 2];
-		expect(list.product()).toEqual(12);
+	it("min", function() {
+		expect([4,2,3,1,4].min()).toEqual(1);
 	});
 
 });

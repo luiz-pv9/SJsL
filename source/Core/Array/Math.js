@@ -2,18 +2,23 @@
 	'use strict';
 
 	Array.prototype.average = function() {
+
 		return this.sum() / this.length;
 	}
 
 
 	Array.prototype.sum = function() {
+
 		return this.reduce(function(memo, val) {
+
 			return memo + (+val || 0);
 		}, 0);
 	}
 
 	Array.prototype.product = function() {
+
 		return this.reduce(function(memo, val) {
+			
 			return memo * val;
 		}, 1);
 	}	

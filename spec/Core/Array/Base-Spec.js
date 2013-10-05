@@ -1,120 +1,104 @@
 describe("Core / Array / Base.js", function() {
 
-	it("finds the index of an element", function() {
-		expect(
-			["a", "b", "c"].indexOf("b")
-		).toEqual(1);
+
+	it("indexOf", function() {
+		expect([1,2,3].indexOf(3)).toEqual(2);
+		expect(["a", "b", "c"].indexOf("d")).toEqual(-1);
 	});
 
-	it("finds if an element belongs to an array", function() {
-		expect(["a", "b", "c"].contains("b")).toBe(true);
-
-		var a = {};
-		var b = {};
-		var c = {};
-
-		expect([a, b, c].contains(b)).toBe(true);
-
-		expect([a, b, c].contains(new Object())).toBe(false); 
+	it("contains", function() {
+		expect([1,2,3].contains(3)).toEqual(true);
+		expect(["a", "b", "c"].contains("d")).toEqual(false);
 	});
 
-	it("sorts an array of objects using the native sort method", function() {
-
-		var list = [{a: 10}, {a: 20}, {a: 5}, {a: 6}];
-
-		expect(list.nativeSortBy('a')[0].a).toEqual(5);
-		expect(list.nativeSortBy('-a')[0].a).toEqual(20);
+	it("remove", function() {
+		expect([1,2,3].remove(2)[1]).toEqual(3);
+		expect([1,2,3].remove(2).length).toEqual(2);
+		expect([1,2,3].remove(5).length).toEqual(3);
 	});
 
-	it("sorts an array of objects using the bubble sort algorithm", function() {
-		var list = [{a: 10}, {a: 20}, {a: 5}, {a: 6}];
-
-		expect(list.bubbleSortBy('a')[0].a).toEqual(5);
-		expect(list.bubbleSortBy('-a')[0].a).toEqual(20);
+	it("removeAll", function() {
+		expect([1,2,3,2].removeAll(2).length).toEqual(2);
+		expect([1,2,3,2,2,2].removeAll(2).length).toEqual(2);
 	});
 
-	it("remove elements from an array", function() {
-		var list = ["a", "b", "c", "d"];
-		expect(list.remove("b").length).toEqual(3);
-
-		list = ["a", "b", "b"];
-		expect(list.remove("b").length).toEqual(2);
+	it("unique", function() {
+		expect([1,2,3,2,4].unique()).toEqual([1,2,3,4]);
+		expect(["a", "b", "b", "a", "b"].unique().length).toEqual(2);
 	});
 
-	it("remove all elements from an array", function() {
-		var list = ["a", "b", "b"];
-		expect(list.removeAll("b").length).toEqual(1);
+	it("addUnique", function() {
+		expect([1,2,3].addUnique(3).length).toEqual(3);
+		expect([1,2,3].addUnique(4).length).toEqual(4);
 	});
 
-	it("generates an array with only the unique elements", function() {
-		var list = ["a", "b", "c", "b", "c", "a", "d", "de"];
-		expect(list.unique().length).toEqual(5);
-	});
-
-	it("adds an element to a list only if the element is not present", function() {
-		var list = ["a", "b", "c"];
-		expect(list.addUnique("b").length).toEqual(3);
-		expect(list.addUnique("d").length).toEqual(4);
-	});
-
-	it("pops", function() {
-		var list = ["a", "b", "c"];
-		expect(list.pop()).toEqual("c");
+	it("pop/drop", function() {
+		var list = [1,2,3];
+		expect(list.pop()).toEqual(3);
 		expect(list.length).toEqual(2);
 	});
 
-	it("loops through each element in the array", function() {
-		var list = [1, 2, 3];
-		var sum = 0;
-		list.each(function(elem) {
-			sum += elem;
+
+	it("each", function() {
+		var i = 0;
+		[1,2,3,4].each(function(n) {
+			i += n;
 		});
-		expect(sum).toEqual(6);
+		expect(i).toEqual(10);
 	});
 
-	it("loops through each element with an index", function() {
-		var list = [1, 2, 3];
+	it("eachWithIndex", function() {
 		var sum = 0;
-		list.eachWithIndex(function(elem, index) {
-			sum += elem + index;
+		// 1 * 0 = 0 
+		// 2 * 1 = 2 +
+		// 3 * 2 = 6 +
+		//        ---
+		//         8
+		[1,2,3].eachWithIndex(function(n, i) {
+			sum += n * i;
 		});
-		expect(sum).toEqual(9);
+		expect(sum).toEqual(8);
 	});
 
-	it("finds the last element in the array", function() {
-		expect([1, 2, 3].last()).toEqual(3);
+	it("last", function() {
+		expect(["a", "b", "c"].last()).toEqual("c");
 	});
 
-	it("generates a sub array given boundary", function() {
-		var list = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-		expect(list.subArray(2, 6).length).toEqual(4);
-		expect(list.subArray(4).length).toEqual(4);
+	it("tail", function() {
+		expect([1,2,3,4].tail().length).toEqual(3);
+		expect([1,2,3,4].tail().tail().length).toEqual(2);
 	});
 
-	it("generates a sub array given an offset", function() {
-		var list = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-		expect(list.offsetLeft(2).first()).toEqual(2);
+	it("head/first", function() {
+		expect([1,2,3].head()).toEqual(1);
 	});
 
-	it("generates a sub array given an offset from the right", function() {
-		var list = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-		expect(list.offsetRight(2).last()).toEqual(6);
+	it("subArray", function() {
+		//      0 1 2 3 4
+		expect([1,2,3,4,5].subArray(1, 3).last()).toEqual(4);
 	});
 
-	it("inserts the element at a given index", function() {
-		var list = [0, 1, 2, 3];
-		expect(list.insertAt(1, 3)[1]).toEqual(3);
+	it("offsetLeft/offsetTop", function() {
+		expect([1,2,3,4,5].offsetLeft(2).head()).toEqual(3);
 	});
 
-	it("inserts the element at first", function() {
-		var list = [0, 1, 2, 3];
-		expect(list.unshift(9)[0]).toEqual(9);
+	it("offsetRight/offsetBottom", function() {
+		expect([1,2,3,4,5].offsetRight(2).last()).toEqual(3);
 	});
 
-	it("reverses an array", function() {
-		var list = [0, 1, 2, 3];
-		expect(list.reverse()[0]).toEqual(3);
+	it("insertAt", function() {
+		var list = [1,2,3,4];
+		list.insertAt(1, 9);
+		expect(list[1]).toEqual(9);
+	});
+
+	it("unshift", function() {
+		var list = [1,2,3,4];
+		expect(list.unshift(9).head()).toEqual(9);
+	});
+
+	it("reverse", function() {
+		expect([1,2,3,4].reverse().head()).toEqual(4);
 	});
 
 });

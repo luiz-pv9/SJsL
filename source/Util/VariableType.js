@@ -1,5 +1,9 @@
-SJsL = SJsL || {};
+;(function(SJsL) {
 
-SJsL.typeOf = function(e) {
-	return Object.prototype.toString.call(e).replace("[object ", "").replace("]", "");
-}
+	SJsL.typeOf = function(e) {
+
+	    return Object.prototype.toString.call(e).replace("[object ", "").replace("]", "").toLowerCase();
+	}
+	
+})(window.SJsL);
+

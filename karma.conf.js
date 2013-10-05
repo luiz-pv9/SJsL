@@ -10,7 +10,7 @@ basePath = '';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  'source/entry.js',
+  'source/SJsL.js',
   'source/Util/**/*.js',
   'source/**/*.js',
   'spec/**/*[Ss]pec.js'
