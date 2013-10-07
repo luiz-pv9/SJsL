@@ -17,10 +17,11 @@ describe("Core / Date / Base", function() {
 		var parser = null;
 
 		beforeEach(function() {
-			parser = Date.parser('d/m/Y');
+			parser = Date.parser('%d/%m/%Y');
 		});
 
 		it("parse", function() {
+			console.log(parser.parse('30/08/1993'));
 			expect(parser.parse('30/08/1993').getTime()).toBeTruthy();
 			expect(parser.parse('30/cow/1993')).toEqual(null);
 		});
@@ -28,7 +29,7 @@ describe("Core / Date / Base", function() {
 
 	describe("upTo", function() {
 
-		var parser = Date.parser('d/m/Y');
+		var parser = Date.parser('%d/%m/%Y');
 		var date1 = parser.parse('30/08/1993');
 
 
@@ -61,13 +62,13 @@ describe("Core / Date / Base", function() {
 	});
 
 	it("is", function() {
-		var date = Date.parser('d/m/Y').parse('30/08/2013');
+		var date = Date.parser('%d/%m/%Y').parse('30/08/2013');
 		expect(date.is().friday()).toEqual(true);
 		expect(date.is().monday()).toEqual(false);
 	});
 
 	it("add", function() {
-		var parser = Date.parser('d/m/Y');
+		var parser = Date.parser('%d/%m/%Y');
 		var date = parser.parse('30/08/2013');
 		expect(date.add().days(1)).toEqual(parser.parse('31/08/2013'));
 		expect(date.add().days(2)).toEqual(parser.parse('01/09/2013'));
@@ -76,21 +77,23 @@ describe("Core / Date / Base", function() {
 
 	it("format", function() {
 
-		SJsL.defaultLocale = "pt";
+		SJsL.defaultLanguage = "pt";
 
-		var day = Date.parser('d/m/Y').parse('30/08/2013');
-		expect(day.format('d')).toEqual('30');
-		expect(day.format('m')).toEqual('08');
-		expect(day.format('y')).toEqual('13');
-		expect(day.format('Y')).toEqual('2013');
-		expect(day.format('D')).toEqual('Sexta-feira');
-		expect(day.format('M')).toEqual('Agosto');
-		expect(day.format('d [de] M')).toEqual('30 de Agosto');
+		var day = Date.parser('%d/%m/%Y').parse('30/08/2013');
+		expect(day.format('%d')).toEqual('30');
+		expect(day.format('%m')).toEqual('8');
+		expect(day.format('%M')).toEqual('08');
+		expect(day.format('%w')).toEqual('Sex');
+		expect(day.format('%W')).toEqual('Sexta-feira');
+		expect(day.format('%y')).toEqual('13');
+		expect(day.format('%Y')).toEqual('2013');
+		expect(day.format('%D')).toEqual('30');
+		expect(day.format('%d de %O')).toEqual('30 de Agosto');
 	});
 
 	it("next", function() {
 
-		var parser = Date.parser('d/m/Y');
+		var parser = Date.parser('%d/%m/%Y');
 		var day = parser.parse('30/08/2013');
 
 		expect(day.next().day()).toEqual(parser.parse('31/08/2013'));

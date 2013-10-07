@@ -5,12 +5,201 @@
 	var dateSeparators = new RegExp(/[.,\/ -]/);
 
 	SJsL.months = {
-		'pt': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+		'pt': {
+			'full': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+			'short': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+		}
 	};
 
 	SJsL.days = {
-		'pt': ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
+		'pt': {
+			'full': ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+			'short': ['Dom', 'Seg', 'Ter', "Qua", "Qui", "Sex", "Sab"]
+		}
 	};
+
+	var zerofy = function(digit) {
+
+		digit = digit.toString();
+		if(digit.length === 1) {
+
+			return "0" + digit;
+		}
+		return digit;
+	}
+
+	var prefixShortYear = function(year) {
+
+		// If the ending digits of an year is greater than 80, I assume
+		// you are dealing with ~ 1980.
+		// Change this if you think this is wrong. Or delete the whole "if" block
+		// to return always "20" with the prefix
+		if(year > 80) {
+
+			return "19" + year;
+		}
+		return "20" + year;
+	}
+
+	var formats = {
+
+		'd': function() {
+			return this.getDate();
+		},
+
+		'D': function() {
+			return zerofy(this.getDate());
+		},
+
+		'w': function() {
+			return SJsL.days[SJsL.defaultLanguage]['short'][this.getDay()]
+		},
+
+		'W': function() {
+			return SJsL.days[SJsL.defaultLanguage]['full'][this.getDay()]
+		},
+
+		'o': function() {
+			return SJsL.months[SJsL.defaultLanguage]['short'][this.getMonth()];
+		},
+
+		'O': function() {
+			return SJsL.months[SJsL.defaultLanguage]['full'][this.getMonth()];
+		},
+
+		'm': function() {
+			return this.getMonth() + 1;
+		},
+
+		'M': function() {
+			return zerofy(this.getMonth() + 1);
+		},
+
+		'y': function() {
+			return +this.getYear().toString().substr(1, 3);
+		},
+
+		'Y': function() {
+			return this.getFullYear();
+		}
+	}
+
+	var interpreters = {
+
+		'd': {
+			category: 'day',
+			fn: function(d) {
+				return +d;
+			}
+		},
+		'D': {
+			category: 'day',
+			fn: function(d) {
+				return +d;
+			}
+		},
+		'o': {
+			category: 'month',
+			fn: function(d) {
+				return SJsL.months[SJsL.defaultLanguage]['short'].indexOf(d);
+			}
+		},
+		'O': {
+			category: 'month',
+			fn: function(d) {
+				return SJsL.months[SJsL.defaultLanguage]['full'].indexOf(d);
+			}
+		},
+		'm': {
+			category: 'month',
+			fn: function(d) {
+				return (+d) - 1;
+			}
+		},
+		'M': {
+			category: 'month',
+			fn: function(d) {
+				return (+d) - 1;
+			}
+		},
+		'y': {
+			category: 'year',
+			fn: function(d) {
+				return +prefixShortYear(d);
+			}
+		},
+		'Y': {
+			category: 'year',
+			fn: function(d) {
+				return +d;
+			}
+		}
+	};
+
+	Date.prototype.format = function(format) {
+
+		var result = "";
+		for(var i = 0, len = format.length; i < len; i++) {
+
+			if(format.charAt(i) === '%') {
+
+				result += formats[format.charAt(++i)].call(this);
+			} else {
+				result += format.charAt(i);
+			}
+		}
+		return result;
+	}
+
+	Date.parser = function(rules) {
+
+		rules = rules.split("%").map(function(rule) {
+
+			return rule.trim().replace(dateSeparators, "");
+		}).filter(function(rule) {
+
+			return rule.length > 0;	
+		});
+
+		return {
+
+			parse: function(date) {
+
+
+				date = date.split(dateSeparators).map(function(part) {
+
+					return part.trim();	
+				}).reverse();
+
+				var dateInfo = {
+
+					year : null,
+					month: null,
+					day  : null
+				};
+
+				rules.each(function(rule) {
+
+					if(interpreters[rule]) {
+
+						var ruleFormat = interpreters[rule];	
+						dateInfo[ruleFormat.category] = ruleFormat.fn(date.pop());
+					}
+					else {
+
+						date.pop();
+					}
+				});
+
+				var newDate = new Date(dateInfo.year, dateInfo.month, dateInfo.day);
+				if(newDate.getTime()) {
+
+					return newDate;
+				}
+				return null;
+			}
+		};
+	}
 
 	Date.prototype.clearTime = function() {
 
@@ -21,47 +210,6 @@
 	Date.today = function() {
 
 		return new Date().clearTime();
-	}
-
-	Date.parser = function(format) {
-
-		var formats = format.split(dateSeparators);
-		return {
-
-			parse: function(string) {
-
-				var parts = string.split(dateSeparators);
-
-				var newDateInfo = {
-					year: null,
-					month: null,
-					day: null
-				};
-
-				formats.eachWithIndex(function(format, index) {
-
-					switch(format) {
-						case 'y':
-							newDateInfo.year = '20' + parts[index];
-							break;
-						case 'Y':
-							newDateInfo.year = parts[index];
-							break;
-						case 'm':
-							newDateInfo.month = parts[index];
-							break;
-						case 'M':
-							newDateInfo.month = SJsL.months[SJsL.defaultLocale].indexOf(parts[index]) + 1;
-							break;
-						case 'd':
-							newDateInfo.day = parts[index];
-							break;
-					}
-				});
-				var date = new Date(newDateInfo.year, newDateInfo.month-1, newDateInfo.day);
-				return (date.getTime()) ? date.clearTime() : null;
-			}
-		}
 	}
 
 	Date.prototype.upTo = function(upperBound) {
@@ -219,69 +367,6 @@
 				return newDate;
 			}
 		};
-	}
-
-	Date.prototype.format = function(format) {
-
-		var self = this;
-		var dateString = "";
-
-		var escaped = false;
-
-		format.each(function(char) {
-			if(char === '[') {
-				escaped = true;
-				return;
-			}
-
-			if(char === ']') {
-				escaped = false;
-				return;
-			}
-
-			if(!escaped) {
-				dateString += self.matchCharacter(char);
-			} else {
-				dateString += char;
-			}
-		});
-
-		return dateString;
-	}
-
-	Date.prototype.matchCharacter = function(char) {
-
-		var zerofy = function(digit) {
-			digit = digit.toString();
-			if(digit.length === 1) {
-				return "0" + digit;
-			}
-			return digit;
-		}
-
-		switch(char) {
-
-			case 'd':
-				return zerofy(this.getDate());
-
-			case 'D':
-				return SJsL.days[SJsL.defaultLocale][this.getDay()];
-
-			case 'm':
-				return zerofy(this.getMonth() + 1);
-
-			case 'M':
-				return SJsL.months[SJsL.defaultLocale][this.getMonth()];
-
-			case 'y':
-				return this.getYear().toString().substring(1, 3);
-
-			case 'Y':
-				return this.getFullYear().toString();
-
-			default:
-				return char;
-		}
 	}
 
 	Date.prototype.next = function() {
