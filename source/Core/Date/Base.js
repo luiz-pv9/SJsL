@@ -26,9 +26,10 @@
 	Date.parser = function(format) {
 
 		var formats = format.split(dateSeparators);
-
 		return {
+
 			parse: function(string) {
+
 				var parts = string.split(dateSeparators);
 
 				var newDateInfo = {
@@ -50,14 +51,15 @@
 							newDateInfo.month = parts[index];
 							break;
 						case 'M':
-							newDateInfo.month = SJsL.months[SJsL.defaultLocale].indexOf(parts[index]);
+							newDateInfo.month = SJsL.months[SJsL.defaultLocale].indexOf(parts[index]) + 1;
 							break;
 						case 'd':
 							newDateInfo.day = parts[index];
 							break;
 					}
 				});
-				return new Date(newDateInfo.year, newDateInfo.month, newDateInfo.day).clearTime();
+				var date = new Date(newDateInfo.year, newDateInfo.month-1, newDateInfo.day);
+				return (date.getTime()) ? date.clearTime() : null;
 			}
 		}
 	}
@@ -225,6 +227,7 @@
 		var dateString = "";
 
 		var escaped = false;
+
 		format.each(function(char) {
 			if(char === '[') {
 				escaped = true;
@@ -351,6 +354,7 @@
 		var stamp = this.getTime();
 
 		var previousWeekDay = function(offset) {
+
 			var currentDate = new Date(stamp).clearTime();
 			var daysToAdd = 7 - ((offset - currentDate.getDay()) % 7);
 			daysToAdd = (daysToAdd === 0) ? 7 : daysToAdd;

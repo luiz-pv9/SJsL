@@ -48,7 +48,7 @@
 
 			this.each(function(e) {
 
-				if(list.last !== e) { list.push(e); }
+				if(list.last() !== e) { list.push(e); }
 			});
 		}
 		else {
@@ -99,7 +99,7 @@
 
 	// Returns the lsat element in the array
 	Array.prototype.last = function() {
-
+		if(this.length === 0) return void 0;
 		return this[this.length-1];
 	}
 
@@ -116,14 +116,15 @@
 	// Returns the first element
 	Array.prototype.head = function() {
 
+		if(this.length === 0) return void 0;
 		return this[0];
 	}
 
 	Array.prototype.first = Array.prototype.head;
 
 	Array.prototype.subArray = function(start, end) {
-		var subArray = [];
 
+		var subArray = [];
 		if(!end) {
 
 			end = start;

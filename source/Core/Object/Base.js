@@ -12,14 +12,6 @@
 		return Object.keys(this);
 	};
 
-	Object.prototype.each = function(fn) {
-
-		this.keys(function(key) {
-
-			fn(key, this[key]);
-		});
-	}
-
 	Object.prototype.shallowClone = function() {
 
 		return SJsL.shallowClone(this);
