@@ -4,7 +4,7 @@
 	// Implementing the indexOf function if it doesn't exists
 	// Comparision happens with triple equal sign
 	// Returns -1 if it doesn't find the element
-	if(SJsL.typeOf(Array.prototype.indexOf) === "Undefined") {
+	if('undefined'.isTypeOf([].indexOf)) {
 
 		Array.prototype.indexOf = function(e) {
 			for(var i=0, len=this.length; i<len; i++) {
