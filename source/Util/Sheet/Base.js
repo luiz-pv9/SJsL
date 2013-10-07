@@ -1,7 +1,7 @@
 ;(function(SJsL) {
 
 	// Constructor
-	SJsL.Matrix = function(arg) {
+	SJsL.Sheet = function(arg) {
 
 		if(SJsL.typeOf(arg) === 'Array') {
 
@@ -20,23 +20,23 @@
 		}
 	}
 
-	SJsL.Matrix.prototype.rowsCount = function() {
+	SJsL.Sheet.prototype.rowsCount = function() {
 
 		return this.matrix.length;
 	}
 
-	SJsL.Matrix.prototype.columnsCount = function(index) {
+	SJsL.Sheet.prototype.columnsCount = function(index) {
 
 		index = index || 0;
 		return this.matrix[index].length;
 	}
 
-	SJsL.Matrix.prototype.rowAt = function(index) {
+	SJsL.Sheet.prototype.rowAt = function(index) {
 
 		return this.matrix[index];
 	}
 
-	SJsL.Matrix.prototype.columnAt = function(index) {
+	SJsL.Sheet.prototype.columnAt = function(index) {
 
 		var column = [];
 		this.eachRow(function(row) {
@@ -46,12 +46,12 @@
 		return column;
 	}
 
-	SJsL.Matrix.prototype.eachRow = function(fn) {
+	SJsL.Sheet.prototype.eachRow = function(fn) {
 
 		this.matrix.each(fn);
 	}
 
-	SJsL.Matrix.prototype.eachColumn = function(fn, basedRowIndex) {
+	SJsL.Sheet.prototype.eachColumn = function(fn, basedRowIndex) {
 
 		basedRowIndex = basedRowIndex || 0;
 		(0).upTo(this.matrix[basedRowIndex].length-1, function(colIndex) {
@@ -60,26 +60,27 @@
 		});
 	}
 
-	SJsL.Matrix.prototype.setRow = function(index, row) {
+	SJsL.Sheet.prototype.setRow = function(index, row) {
 
 		this.matrix[index] = row;
 		return this;
 	}
 
-	SJsL.Matrix.prototype.setColumn = function(index, col) {
+	SJsL.Sheet.prototype.setColumn = function(index, col) {
 
 		col.eachWithIndex(function(item, colIndex) {
 
+			this.assureRow(index);
 			this.matrix[index][colIndex] = item;
 		});
 		return this;
 	}
 
-	SJsL.Matrix.prototype.at = function(row, col) {
+	SJsL.Sheet.prototype.at = function(row, col) {
 
 		if(!col) {
 
-			return this.matrix[row];
+			return this.rowAt(row);
 		}
 
 		if(!row) {
@@ -89,24 +90,31 @@
 		return this.matrix[row][col];
 	}
 
-	SJsL.Matrix.prototype.set = function(row, col, value) {
+	SJsL.Sheet.prototype.assureRow = function(rowIndex) {
 
+		this.matirx[rowIndex] = this.matrix[rowIndex] || [];
+		return this;
+	}
+
+	SJsL.Sheet.prototype.set = function(row, col, value) {
+
+		this.assureRow(row);
 		this.matrix[row][col] = value;
 		return this;
 	}
 
-	SJsL.Matrix.prototype.appendRow = function(row) {
+	SJsL.Sheet.prototype.appendRow = function(row) {
 
 		this.matrix.push(row);
 	}
 
-	SJsL.Matrix.prototype.appendColumn = function(col, basedRowIndex) {
+	SJsL.Sheet.prototype.appendColumn = function(col, basedRowIndex) {
 
 		basedRowIndex = basedRowIndex || 0;
 		return this.setColumn(this.matrix[basedRowIndex].length, col);
 	}
 
-	SJsL.Matrix.prototype.filterRows = function(fn) {
+	SJsL.Sheet.prototype.filterRows = function(fn) {
 
 		var rows = [];
 		this.eachRow(function(row) {
@@ -116,10 +124,10 @@
 				rows.push(row);
 			}
  		});
- 		return new SJsL.Matrix(rows);
+ 		return new SJsL.Sheet(rows);
 	}
 
-	SJsL.Matrix.prototype.filterColumns = function(fn) {
+	SJsL.Sheet.prototype.filterColumns = function(fn) {
 
 		var columns = [];
 		this.eachColumn(function(col) {
@@ -129,10 +137,15 @@
 				columns.push(col);
 			}
 		});
-		return new SJsL.Matrix(columns);
+		return new SJsL.Sheet(columns);
 	}
 
-	SJsL.Matrix.prototype.rowsWhere = function(conditions) {
+	// conditions: {
+	// 	index: 3,
+	// 	value: 'foo'
+	// }
+	// Rows where the third element equals foo will pass the test
+	SJsL.Sheet.prototype.rowsWhere = function(conditions) {
 
 		if('object'.isTypeOf(conditions)) {
 			conditions = [conditions];
@@ -156,10 +169,10 @@
 			}
 		});
 
-		return new SJsL.Matrix(rows);
+		return new SJsL.Sheet(rows);
 	}
 
-	SJsL.Matrix.prototype.rowsWhereNot = function(conditions) {
+	SJsL.Sheet.prototype.rowsWhereNot = function(conditions) {
 		if('object'.isTypeOf(conditions)) {
 			conditions = [conditions];
 		}
@@ -183,10 +196,10 @@
 				rows.push(row);
 			}
 		});
-		return new SJsL.Matrix(rows);
+		return new SJsL.Sheet(rows);
 	}
 
-	SJsL.Matrix.prototype.columnsWhere = function(conditions) {
+	SJsL.Sheet.prototype.columnsWhere = function(conditions) {
 
 		if('object'.isTypeOf(conditions)) {
 
@@ -211,7 +224,7 @@
 			}
 		});
 
-		var matrix = new SJsL.Matrix();
+		var matrix = new SJsL.Sheet();
 		columns.eachWithIndex(function(col, index) {
 
 			matrix.setColumn(col, index);
@@ -219,7 +232,7 @@
 		return matrix;
 	}
 
-	SJsL.Matrix.prototype.columnsWhereNot = function(conditions) {
+	SJsL.Sheet.prototype.columnsWhereNot = function(conditions) {
 
 		if('object'.isTypeOf(conditions)) {
 			conditions = [conditions];
@@ -243,7 +256,7 @@
 			}
 		});
 
-		var matrix = new SJsL.Matrix();
+		var matrix = new SJsL.Sheet();
 		columns.eachWithIndex(function(col, index) {
 
 			matrix.setColumn(col, index);

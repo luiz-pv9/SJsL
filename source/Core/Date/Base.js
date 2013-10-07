@@ -32,9 +32,9 @@
 
 		// If the ending digits of an year is greater than 80, I assume
 		// you are dealing with ~ 1980.
-		// Change this if you think this is wrong. Or delete the whole "if" block
+		// Change it if you think this is wrong. Or delete the whole "if" block
 		// to return always "20" with the prefix
-		if(year > 80) {
+		if(+year > 80) {
 
 			return "19" + year;
 		}

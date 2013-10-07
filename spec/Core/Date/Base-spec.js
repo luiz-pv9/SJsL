@@ -102,9 +102,7 @@ describe("Core / Date / Base", function() {
 		expect(day.next().monday()).toEqual(parser.parse('02/09/2013'));
 
 		// `day` is a friday
-		expect(
-			day.next().monday().previous().friday()	
-		).toEqual(day);
+		expect(day.next().monday().previous().friday()).toEqual(day);
 	});
 
 });

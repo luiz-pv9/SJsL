@@ -4,6 +4,7 @@ describe("Core / Array / Base.js", function() {
 	it("indexOf", function() {
 		expect([1,2,3].indexOf(3)).toEqual(2);
 		expect(["a", "b", "c"].indexOf("d")).toEqual(-1);
+		expect([].indexOf('c')).toEqual(-1);
 	});
 
 	it("contains", function() {
@@ -25,6 +26,8 @@ describe("Core / Array / Base.js", function() {
 	it("unique", function() {
 		expect([1,2,3,2,4].unique()).toEqual([1,2,3,4]);
 		expect(["a", "b", "b", "a", "b"].unique().length).toEqual(2);
+		// faster algorithm
+		expect([1,2,2,3,3,3,4,5,5].unique(true)).toEqual([1,2,3,4,5]);
 	});
 
 	it("addUnique", function() {
