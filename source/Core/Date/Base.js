@@ -260,7 +260,7 @@
 
 							while(dates.last() < upperBound) {
 
-								dates.push(dates.last().add().days(interval));
+								dates.push(dates.last().add(interval).days());
 							}
 
 							if(dates.last() > upperBound) {
@@ -275,7 +275,7 @@
 
 							while(dates.last() < upperBound) {
 
-								dates.push(dates.last().add().months(interval));
+								dates.push(dates.last().add(interval).months());
 							}
 
 							if(dates.last() > upperBound) {
@@ -290,7 +290,7 @@
 
 							while(dates.last() < upperBound) {
 
-								dates.push(dates.last().add().years(interval));
+								dates.push(dates.last().add(interval).years());
 							}
 
 							if(dates.last() > upperBound) {
@@ -342,25 +342,25 @@
 		}
 	}
 
-	Date.prototype.add = function() {
+	Date.prototype.add = function(amount) {
 
 		var stamp = this.getTime();
 
 		return {
 
-			days: function(amount) {
+			days: function() {
 
 				var newDate = new Date(stamp);
 				newDate.setDate(newDate.getDate() + amount);
 				return newDate;
 			},
-			months: function(amount) {
+			months: function() {
 
 				var newDate = new Date(stamp);
 				newDate.setMonth(newDate.getMonth() + amount);
 				return newDate;
 			},
-			years: function(amount) {
+			years: function() {
 
 				var newDate = new Date(stamp);
 				newDate.setYear(newDate.getFullYear() + amount);
@@ -377,7 +377,7 @@
 			var currentDate = new Date(stamp).clearTime();
 			var daysToAdd = (offset - currentDate.getDay()) % 7;
 			daysToAdd = (daysToAdd === 0) ? 7 : daysToAdd;
-			return currentDate.add().days(daysToAdd);
+			return currentDate.add(daysToAdd).days();
 		}
 
 		return {
@@ -443,7 +443,7 @@
 			var currentDate = new Date(stamp).clearTime();
 			var daysToAdd = 7 - ((offset - currentDate.getDay()) % 7);
 			daysToAdd = (daysToAdd === 0) ? 7 : daysToAdd;
-			return currentDate.add().days(-daysToAdd);
+			return currentDate.add(-daysToAdd).days();
 		}
 
 		return {

@@ -1,18 +1,48 @@
 ;(function(SJsL) {
 
-	Number.prototype.days = function(days) {
+	Number.prototype.days = function() {
 
-		var timeStamp = 86400000 * days;
+		var amount = this;
 
 		return {
 			ago: function() {
-				return new Date(Date.today().getTime() - timeStamp);
+				return new Date(Date.today().previous().day(amount));
 			},
 
 			ahead: function() {
-				return new Date(Date.today().getTime() + timeStamp);
+				return new Date(Date.today().next().day(amount));
 			}
-		}	
+		}
+	}
+
+	Number.prototype.months = function() {
+
+		var amount = this;
+
+		return {
+			ago: function() {
+				return new Date(Date.today().previous().month(amount));
+			},
+
+			ahead: function() {
+				return new Date(Date.today().next().month(amount));
+			}
+		}
+	}
+
+	Number.prototype.years = function() {
+
+		var amount = this;
+
+		return {
+			ago: function() {
+				return new Date(Date.today().previous().year(amount));
+			},
+
+			ahead: function() {
+				return new Date(Date.today().next().year(amount));
+			}
+		}
 	}
 
 })(window.SJsL);

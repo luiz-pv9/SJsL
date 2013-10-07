@@ -70,9 +70,9 @@ describe("Core / Date / Base", function() {
 	it("add", function() {
 		var parser = Date.parser('%d/%m/%Y');
 		var date = parser.parse('30/08/2013');
-		expect(date.add().days(1)).toEqual(parser.parse('31/08/2013'));
-		expect(date.add().days(2)).toEqual(parser.parse('01/09/2013'));
-		expect(date.add().months(1)).toEqual(parser.parse('30/09/2013'));
+		expect(date.add(1).days()).toEqual(parser.parse('31/08/2013'));
+		expect(date.add(2).days()).toEqual(parser.parse('01/09/2013'));
+		expect(date.add(1).months()).toEqual(parser.parse('30/09/2013'));
 	});
 
 	it("format", function() {
