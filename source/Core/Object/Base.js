@@ -18,7 +18,7 @@
 	}
 
 	Object.prototype.deepClone = function() {
-		
+
 		return SJsL.deepClone(this);
 	}
 

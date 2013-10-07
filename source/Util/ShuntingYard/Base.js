@@ -2,6 +2,9 @@
 
 	SJsL.ShuntingYard = function(expression) {
 
+		expression.replace(/\[{/g, "(");
+		expression.replace(/\]}/g, ")");
+
 		var stack = [];
 		var stage = [];
 

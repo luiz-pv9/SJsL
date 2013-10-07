@@ -3,9 +3,9 @@
 	// Constructor
 	SJsL.Sheet = function(arg) {
 
-		if(SJsL.typeOf(arg) === 'Array') {
+		if('array'.isTypeOf(arg)) {
 
-			if(SJsL.typeOf(arg[0]) === 'Array')	 {
+			if('array'.isTypeOf(arg[0])) {
 
 				this.matrix = arg;	
 			}
@@ -20,14 +20,51 @@
 		}
 	}
 
+	SJsL.Sheet.prototype.firstRow = function() {
+
+		return this.rowAt(0);
+	};
+
+	SJsL.Sheet.prototype.lastRow = function() {
+
+		return this.rowAt(this.rowsCount() - 1);
+	};
+
+	SJsL.Sheet.prototype.firstColumn = function() {
+
+		return this.columnAt(0);
+	};
+
+	SJsL.Sheet.prototype.lastColumn = function() {
+
+		return this.columnAt(this.columnsCount() - 1);
+	};
+
+	SJsL.Sheet.prototype.prettyPrint = function() {
+
+		this.eachRow(function(row) {
+
+			console.log(row);
+		});
+	}
+
 	SJsL.Sheet.prototype.rowsCount = function() {
 
+		if (this.matrix.length === 1) {
+			if(this.matrix[0].length === 0) {
+				return 0;
+			}
+			else {
+				return 1;
+			}
+		}
 		return this.matrix.length;
 	}
 
 	SJsL.Sheet.prototype.columnsCount = function(index) {
 
 		index = index || 0;
+		this.assureRow(index);
 		return this.matrix[index].length;
 	}
 
@@ -53,10 +90,10 @@
 
 	SJsL.Sheet.prototype.eachColumn = function(fn, basedRowIndex) {
 
+		var self = this;
 		basedRowIndex = basedRowIndex || 0;
-		(0).upTo(this.matrix[basedRowIndex].length-1, function(colIndex) {
-
-			fn(this.columnAt(colIndex));
+		(0).upTo(this.rowAt(basedRowIndex).length, function(colIndex) {
+			fn(self.columnAt(colIndex));
 		});
 	}
 
@@ -68,22 +105,23 @@
 
 	SJsL.Sheet.prototype.setColumn = function(index, col) {
 
+		var self = this;
 		col.eachWithIndex(function(item, colIndex) {
 
-			this.assureRow(index);
-			this.matrix[index][colIndex] = item;
+			self.assureRow(colIndex);
+			self.matrix[colIndex][index] = item;
 		});
 		return this;
 	}
 
 	SJsL.Sheet.prototype.at = function(row, col) {
 
-		if(!col) {
+		if(col === null || col === void 0) {
 
 			return this.rowAt(row);
 		}
 
-		if(!row) {
+		if(row === null || row === void 0) {
 			return this.columnAt(col);
 		}
 
@@ -92,7 +130,7 @@
 
 	SJsL.Sheet.prototype.assureRow = function(rowIndex) {
 
-		this.matirx[rowIndex] = this.matrix[rowIndex] || [];
+		this.matrix[rowIndex] = this.matrix[rowIndex] || [];
 		return this;
 	}
 
@@ -137,7 +175,13 @@
 				columns.push(col);
 			}
 		});
-		return new SJsL.Sheet(columns);
+
+		var matrix = new SJsL.Sheet();
+		columns.eachWithIndex(function(col, index) {
+
+			matrix.setColumn(index, col);
+		});
+		return matrix;
 	}
 
 	// conditions: {
@@ -151,8 +195,7 @@
 			conditions = [conditions];
 		}
 
-		var rows = [];
-		this.eachRow(function(row) {
+		return this.filterRows(function(row) {
 
 			var match = true;
 			conditions.each(function(condition) {
@@ -162,24 +205,17 @@
 					match = false;
 				}
 			});
-
-			if(match) {
-
-				rows.push(row);
-			}
+			return match;
 		});
-
-		return new SJsL.Sheet(rows);
 	}
 
 	SJsL.Sheet.prototype.rowsWhereNot = function(conditions) {
+
 		if('object'.isTypeOf(conditions)) {
 			conditions = [conditions];
 		}
 
-		var rows = [];
-
-		this.eachRow(function(row) {
+		return this.filterRows(function(row) {
 
 			var match = true;
 			conditions.each(function(condition) {
@@ -188,15 +224,9 @@
 
 					match = false;
 				}
-
 			});
-
-			if(!match) {
-
-				rows.push(row);
-			}
+			return !match;
 		});
-		return new SJsL.Sheet(rows);
 	}
 
 	SJsL.Sheet.prototype.columnsWhere = function(conditions) {
@@ -206,8 +236,8 @@
 			conditions = [conditions];
 		}
 
-		var columns = [];
-		this.eachColumn(function(col) {
+
+		return this.filterColumns(function(col) {
 
 			var match = true;
 			conditions.each(function(condition) {
@@ -217,52 +247,36 @@
 					match = false;
 				}
 			});
-
-			if(match) {
-
-				columns.push(col);
-			}
+			return match;
 		});
-
-		var matrix = new SJsL.Sheet();
-		columns.eachWithIndex(function(col, index) {
-
-			matrix.setColumn(col, index);
-		});
-		return matrix;
 	}
 
 	SJsL.Sheet.prototype.columnsWhereNot = function(conditions) {
 
 		if('object'.isTypeOf(conditions)) {
+
 			conditions = [conditions];
 		}
 
-		var columns = [];
-		this.eachColumn(function(col) {
+
+		return this.filterColumns(function(col) {
 
 			var match = true;
-
 			conditions.each(function(condition) {
+
 				if(col[condition.index] !== condition.value) {
 
 					match = false;
 				}
 			});
-
-			if(!match) {
-
-				columns.push(col);
-			}
+			return !match;
 		});
-
-		var matrix = new SJsL.Sheet();
-		columns.eachWithIndex(function(col, index) {
-
-			matrix.setColumn(col, index);
-		});
-		return matrix;
 	}
+
+	SJsL.Sheet.prototype.clone = function() {
+
+		return new SJsL.Sheet(this.matrix.deepClone());	
+	};
 
 
 })(window.SJsL);
