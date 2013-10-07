@@ -14,7 +14,7 @@
 
 	Number.prototype.range = function() {
 		var array = [];
-		for(var i = 0; i <= this; i++) {
+		for(var i = 0; i < this; i++) {
 			array.push(i);
 		}
 		return array;
