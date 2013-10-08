@@ -69,6 +69,14 @@ describe("Util / Tree / Native", function() {
         expect(node.name).toEqual("Octopus");
     });
 
+    it("findBy", function() {
+        var node = tree.findBy(function(node) {
+            return node.id === 3;
+        });
+
+        expect(node.name).toEqual("Octopus");
+    });
+
     it("nodeChildren", function() {
 
         var node = tree.find(3);

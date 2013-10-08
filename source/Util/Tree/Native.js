@@ -1,6 +1,7 @@
 ;(function(SJsL) {
 
     SJsL.NativeTree = function(config) {
+
         this.tree = [];
         this.uniqueField = config.uniqueField || 'id';
         this.generateId = config.generateId || false;
@@ -8,6 +9,7 @@
     }
 
     SJsL.NativeTree.prototype.setData = function(tree) {
+
         if(SJsL.typeOf(tree) === 'array') {
 
             this.tree = tree;
@@ -20,9 +22,12 @@
     };
 
     SJsL.NativeTree.prototype.search = function(fn) {
+
         var list = [];
         this.each(function(node, deep) {
+
             if(fn(node, deep)) {
+
                 list.push(node);
             }
         });
@@ -30,29 +35,33 @@
     }
 
     SJsL.NativeTree.prototype.nodeChildren = function(node) {
+
         node[this.childrenField] = node[this.childrenField] || [];
         return node[this.childrenField];
     }
 
     SJsL.NativeTree.prototype.nodeHasChildren = function(node) {
+
         return this.nodeChildren(node).length > 0;
     }
 
     SJsL.NativeTree.prototype.nodeId = function(node) {
+
         return node[this.uniqueField];
     }
 
     SJsL.NativeTree.prototype.nodeParent = function(node) {
 
         if('number'.isTypeOf(node)) {
+
             node = this.find(node); 
         }
 
         var self = this;
-        var parent = this.search(function(n) {
+        var parent = this.findBy(function(n) {
 
             return self.nodeChildren(n).contains(node);
-        }).head();
+        });
 
         return parent;
     }
@@ -63,9 +72,10 @@
         subtree = subtree || self.tree;
         deep = deep || 0;
         subtree.each(function(node) {
-            fn(node, deep);
 
+            fn(node, deep);
             if(self.nodeHasChildren(node)) {
+
                 self.each(fn, self.nodeChildren(node), deep + 1);
             }
         });
@@ -86,6 +96,28 @@
                 if(self.nodeHasChildren(subtree[i])) {
 
                     var item = self.find(id, self.nodeChildren(subtree[i]));
+                    if(item) return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    SJsL.NativeTree.prototype.findBy = function(fn, subtree) {
+
+        var self = this;
+        subtree = subtree || self.tree;
+        for(var i = 0; i < subtree.length; i++) {
+
+            if(fn(subtree[i])) {
+
+                return subtree[i];
+            }
+            else {
+
+                if(self.nodeHasChildren(subtree[i])) {
+
+                    var item = self.findBy(fn, self.nodeChildren(subtree[i]));
                     if(item) return item;
                 }
             }
