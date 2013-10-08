@@ -28,9 +28,12 @@
 
 		var self = this;
 
-		this.tree.each(function(node) {
+		this.tree.eachWithIndex(function(node, index) {
 
-			if(node instanceof SJsL.TreeNode) { return; }
+			if(node instanceof SJsL.TreeNode) { 
+				node.propagate();
+				return; 
+			}
 
 			if(self.generateId) {
 
@@ -38,9 +41,12 @@
 			}
 
 			node = new SJsL.TreeNode(self, node);
+			self.tree[index] = node;
 			node.propagate();
 		});
 
+
+		self.assignParentIds();
 		return self;
 	}
 
@@ -50,16 +56,28 @@
 		var container = [];
 		subtree = subtree || this.tree;
 		subtree.each(function(node) {
-			
-			var newNode = node.data;
+
+			// Backup
+			var nodeChildren = node.data.children;
+
+			// Remove the children, infinite recursion in the deep clone
+			delete node.data.children;
+
+			// Clone the node
+			var newNode = node.data.deepClone();
+
+			// Restore the children
+			node.data[self.childrenField] = nodeChildren;
 
 			if(node.hasChildren()) {
 
-				newNode[self.childrenField] = self.toNative(node.children());
+				var children = self.toNative(node.children());
+				newNode[self.childrenField] = children;
 			}
 
 			container.push(newNode);
 		});
+
 		return container;
 	}
 
@@ -87,7 +105,7 @@
 		var list = [];
 		this.each(function(node, deep) {
 
-			if(fn(node.data, deep)) {
+			if(fn(node, deep)) {
 
 				list.push(node);
 			}
@@ -113,21 +131,43 @@
 		});
 	}
 
-	SJsL.Tree.prototype.find = function(id, subtree) {
+	SJsL.Tree.prototype.eachWrapped = function(fn, subtree, deep) {
 
+		var self = this;
+		subtree = subtree || self.tree;
+		deep = deep || 0;
+		subtree.each(function(node) {
+
+			// Calls the callback
+			fn(node, deep);
+
+			if(node.hasChildren()) {
+
+				self.eachWrapped(fn, node.children(), deep + 1);
+			}
+
+		});
+	}
+
+	SJsL.Tree.prototype.find = function(id, wrapped, subtree) {
+
+		wrapped = wrapped || false;
 		var self = this;
 		subtree = subtree || self.tree;
 		for(var i = 0; i < subtree.length; i++) {
 
 			if(subtree[i].id === id) {
 
-				return subtree[i].data;
+				if(wrapped)
+					return subtree[i];
+				else
+					return subtree[i].data;
 			}
 			else {
 
 				if(subtree[i].hasChildren()) {
 
-					var item = this.find(id, subtree[i].children());
+					var item = this.find(id, wrapped, subtree[i].children());
 					if(item) return item;
 				}
 			}
@@ -137,13 +177,13 @@
 
 	SJsL.Tree.prototype.clone = function() {
 		
-		var newTree = SJsL.deepClone(this.toNative());
+		var newTree = this.toNative().deepClone();
 		return new SJsL.Tree({
 
 			childrenField: this.childrenField,
 			uniqueField: this.uniqueField,
 			generateId: this.generateId
-		}).setData(newTree).propagate().assignParentIds();
+		}).setData(newTree).propagate();
 	}
 
 
