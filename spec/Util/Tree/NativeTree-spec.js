@@ -89,4 +89,29 @@ describe("Util / Tree / Native", function() {
         expect(tree.nodeParent(node)).toEqual(tree.find(1));
     });
 
+    it("duplicate", function() {
+
+        tree.digestIds();
+
+        var newNode = tree.duplicate(3);
+
+        expect(tree.nodeParent(newNode)).toEqual(
+            tree.nodeParent(tree.find(3))
+        );
+    });
+
+    it("remove", function() {
+        expect(tree.nodeChildren(tree.find(3)).length).toBe(2);
+        tree.remove(4);
+        expect(tree.nodeChildren(tree.find(3)).length).toBe(1);
+    });
+
+    it("moveNode", function() {
+        expect(tree.nodeChildren(tree.find(3)).length).toEqual(2);
+        expect(tree.nodeChildren(tree.find(5)).length).toEqual(1);
+        tree.moveNode(6, 3);
+        expect(tree.nodeChildren(tree.find(3)).length).toEqual(3);
+        expect(tree.nodeChildren(tree.find(5)).length).toEqual(0);
+    });
+
 });

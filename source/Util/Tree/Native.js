@@ -21,6 +21,14 @@
         return this;
     };
 
+    SJsL.NativeTree.prototype.digestIds = function() {
+        var highest = this.flatten().pluck(this.uniqueField).max();
+        if(+highest) {
+
+            SJsL.setBaseId((+highest) + 1);
+        }
+    }
+
     SJsL.NativeTree.prototype.search = function(fn) {
 
         var list = [];
@@ -50,6 +58,43 @@
         return node[this.uniqueField];
     }
 
+    SJsL.NativeTree.prototype.nodeSetId = function(node, id) {
+        node[this.uniqueField] = id;
+        return node;
+    }
+
+    SJsL.NativeTree.prototype.duplicate = function(id) {
+        var node = this.find(id);
+        var newNode = node.deepClone();
+        this.nodeUpdateId(newNode);
+        this.nodeChildren(this.nodeParent(node)).push(newNode);
+        return newNode;
+    }
+
+    SJsL.NativeTree.prototype.remove = function(id) {
+        var node = this.find(id);
+        this.nodeChildren(this.nodeParent(node)).remove(node);
+        return node;
+    }
+
+    SJsL.NativeTree.prototype.moveNode = function(fromId, toId) {
+        var node = this.remove(fromId);
+        this.nodeChildren(this.find(toId)).push(node);
+        return this;
+    }
+
+    SJsL.NativeTree.prototype.nodeUpdateId = function(node) {
+
+        var self = this;
+        this.nodeSetId(node, SJsL.generateId());
+        if(self.nodeHasChildren(node)) {
+
+            self.nodeChildren(node).each(function(node) {
+                self.nodeUpdateId(node);
+            });
+        }
+    }
+
     SJsL.NativeTree.prototype.nodeParent = function(node) {
 
         if('number'.isTypeOf(node)) {
@@ -64,6 +109,29 @@
         });
 
         return parent;
+    }
+
+    SJsL.NativeTree.prototype.flatten = function() {
+        var list = [];
+        this.each(function(node) {
+            list.push(node);
+        });
+        return list;
+    }
+
+    SJsL.NativeTree.prototype.associateUniqueValues = function() {
+
+        var self = this;
+        self.digestIds();
+
+        this.each(function(node) {
+
+            if(!self.nodeId(node)) {
+
+                self.nodeSetId(node, SJsL.generateId());
+            }
+        });
+        return this;
     }
 
     SJsL.NativeTree.prototype.each = function(fn, subtree, deep) {
