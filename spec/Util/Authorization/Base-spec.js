@@ -9,7 +9,7 @@ describe("Util / Authorization / Base", function() {
 
 		Ability.setRules(function(user) {
 
-			this.can.read("Projetos", function(projeto) {
+			this.can.read("Projects", function(projeto) {
 
 				if(user.role === 'admin') {
 
@@ -17,21 +17,21 @@ describe("Util / Authorization / Base", function() {
 				}
 				else {
 
-					return projeto.tipo !== 'Funcional';
+					return projeto.type !== 'Apple';
 				}
 			});
 
 			if(user.role === "manager") {
 
-				this.can.create("Projetos");
-				this.can.edit("Projetos", function(projeto) {
+				this.can.create("Projects");
+				this.can.edit("Projects", function(projeto) {
 
 					return projeto.managerId  === user.id;
 				});
 			}
 
-			this.can.manage("Crs");
-			this.can.manage("Demandas", function(demanda) {
+			this.can.manage("Dogs");
+			this.can.manage("Phones", function(demanda) {
 
 				if(user.role === 'admin') {
 
@@ -39,7 +39,7 @@ describe("Util / Authorization / Base", function() {
 				}
 				else {
 
-					return demanda.tipo !== 'Funcional';
+					return demanda.type !== 'Apple';
 				}
 			});
 		});
@@ -55,15 +55,15 @@ describe("Util / Authorization / Base", function() {
 
 	it("authorizes the user", function() {
 
-		expect(user.can.read("Projetos")).toBe(true);
-		expect(user.can.read("Projetos", {tipo: "Funcional"})).toBe(false);
-		expect(user.can.create("Projetos")).toBe(true);
-		expect(user.can.edit("Projetos", {managerId: 3})).toBe(true);
-		expect(user.can.edit("Projetos", {managerId: 4})).toBe(false);
-		expect(user.can.edit("Crs")).toBe(true);
-		expect(user.can.delete("Crs")).toBe(true);
-		expect(user.can.read("Crs")).toBe(true);
-		expect(user.can.read("Demandas")).toBe(true);
-		expect(user.can.read("Demandas", {tipo: "Funcional"})).toBe(false);
+		expect(user.can.read("Projects")).toBe(true);
+		expect(user.can.read("Projects", {type: "Apple"})).toBe(false);
+		expect(user.can.create("Projects")).toBe(true);
+		expect(user.can.edit("Projects", {managerId: 3})).toBe(true);
+		expect(user.can.edit("Projects", {managerId: 4})).toBe(false);
+		expect(user.can.edit("Dogs")).toBe(true);
+		expect(user.can.delete("Dogs")).toBe(true);
+		expect(user.can.read("Dogs")).toBe(true);
+		expect(user.can.read("Phones")).toBe(true);
+		expect(user.can.read("Phones", {type: "Apple"})).toBe(false);
 	});
 });
