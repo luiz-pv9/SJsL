@@ -4,7 +4,6 @@
 
         this.tree = [];
         this.uniqueField   = config.uniqueField   || 'id';
-        this.generateId    = config.generateId    || false;
         this.childrenField = config.childrenField || 'children';
     }
 
