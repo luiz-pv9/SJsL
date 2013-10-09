@@ -1,4 +1,4 @@
-var SJsL = { version: '0.0.1' };
+var SJsL = { version: '0.0.3' };
 ;;(function(SJsL) {
 
     SJsL.deepClone = function(arg) {
@@ -414,6 +414,18 @@ var SJsL = { version: '0.0.1' };
 			}
 		});
 		return list;
+	}
+
+	Array.prototype.find = function(fn) {
+
+		for(var i = 0; i < this.length; i++) {
+
+			if(fn(this[i])) {
+				
+				return this[i];
+			}
+		}
+		return null;
 	}
 
 	Array.prototype.filter = Array.prototype.search;

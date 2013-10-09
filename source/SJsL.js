@@ -1,1 +1,1 @@
-var SJsL = { version: '0.0.1' };
+var SJsL = { version: '0.0.3' };
