@@ -29,6 +29,7 @@ module.exports = function(grunt) {
         q('ShuntingYard/*.js'),
         q('Tree/*.js'),
         q('Unique/*.js'),
+        q('Authorization/*.js'),
         i('SJsL.end.js')
     ];
 
