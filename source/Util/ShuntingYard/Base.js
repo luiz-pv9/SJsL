@@ -119,4 +119,4 @@
 		}
 	}
 
-})(window.SJsL);
+})(SJsL);

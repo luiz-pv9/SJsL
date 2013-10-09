@@ -209,4 +209,4 @@
         }).setData(this.tree.deepClone());
     }
 
-})(window.SJsL);
+})(SJsL);

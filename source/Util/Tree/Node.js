@@ -132,4 +132,4 @@
         return tree.propagate();
     }
 
-})(window.SJsL);
+})(SJsL);

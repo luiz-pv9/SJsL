@@ -32,4 +32,4 @@
 		return prefix + this;
 	};
 
-})(window.SJsL);
+})(SJsL);

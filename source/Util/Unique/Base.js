@@ -28,5 +28,5 @@
 		return newId;
 	}
 
-})(window.SJsL);
+})(SJsL);
 

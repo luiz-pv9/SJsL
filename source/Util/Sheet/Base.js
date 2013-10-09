@@ -279,4 +279,4 @@
 	};
 
 
-})(window.SJsL);
+})(SJsL);

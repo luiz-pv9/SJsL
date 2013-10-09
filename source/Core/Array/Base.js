@@ -182,4 +182,4 @@
 	}
 
 
-})(window.SJsL);
+})(SJsL);

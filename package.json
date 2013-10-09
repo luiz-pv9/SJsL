@@ -1,0 +1,8 @@
+{
+    "name": "SJsL",
+    "version": "0.0.1",
+    "dependencies": {
+        "grunt": "*",
+        "grunt-contrib-concat": "*"
+    }
+}

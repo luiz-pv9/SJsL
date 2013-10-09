@@ -12,4 +12,4 @@
 		}
 	}
 
-})(window.SJsL);
+})(SJsL);

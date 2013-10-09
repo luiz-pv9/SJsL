@@ -50,6 +50,18 @@
 		return list;
 	}
 
+	Array.prototype.find = function(fn) {
+
+		for(var i = 0; i < this.length; i++) {
+
+			if(fn(this[i])) {
+				
+				return this[i];
+			}
+		}
+		return null;
+	}
+
 	Array.prototype.filter = Array.prototype.search;
 
 	Array.prototype.outNested = function(attr) {
@@ -128,4 +140,4 @@
 		return list; 
 	}
 
-})(window.SJsL);
+})(SJsL);

@@ -22,4 +22,4 @@
 		return SJsL.deepClone(this);
 	}
 
-})(window.SJsL);
+})(SJsL);

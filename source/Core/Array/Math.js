@@ -37,4 +37,4 @@
 		return this.reduce(function(a, b) { return b > a ? a : b }, this.head());
 	}
 
-})(window.SJsL);
+})(SJsL);

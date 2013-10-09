@@ -13,4 +13,4 @@
     	}
     }
 
-})(window.SJsL);
+})(SJsL);

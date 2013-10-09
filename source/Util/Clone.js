@@ -91,4 +91,4 @@
     }
 
 
-})(window.SJsL);
+})(SJsL);

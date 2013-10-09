@@ -499,4 +499,4 @@
 		}
 	}
 
-})(window.SJsL);
+})(SJsL);
