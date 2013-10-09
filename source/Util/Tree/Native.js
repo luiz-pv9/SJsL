@@ -3,8 +3,8 @@
     SJsL.NativeTree = function(config) {
 
         this.tree = [];
-        this.uniqueField = config.uniqueField || 'id';
-        this.generateId = config.generateId || false;
+        this.uniqueField   = config.uniqueField   || 'id';
+        this.generateId    = config.generateId    || false;
         this.childrenField = config.childrenField || 'children';
     }
 
@@ -60,7 +60,7 @@
     }
 
     SJsL.NativeTree.prototype.nodeSetId = function(node, id) {
-        
+
         node[this.uniqueField] = id;
         return node;
     }
