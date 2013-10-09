@@ -21,7 +21,8 @@
         return this;
     };
 
-    SJsL.NativeTree.prototype.digestIds = function() {
+    SJsL.NativeTree.prototype.updateIdRegister = function() {
+
         var highest = this.flatten().pluck(this.uniqueField).max();
         if(+highest) {
 
@@ -122,7 +123,7 @@
     SJsL.NativeTree.prototype.associateUniqueValues = function() {
 
         var self = this;
-        self.digestIds();
+        self.updateIdRegister();
 
         this.each(function(node) {
 

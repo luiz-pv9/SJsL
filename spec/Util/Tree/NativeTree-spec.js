@@ -91,7 +91,7 @@ describe("Util / Tree / Native", function() {
 
     it("duplicate", function() {
 
-        tree.digestIds();
+        tree.updateIdRegister();
 
         var newNode = tree.duplicate(3);
 
