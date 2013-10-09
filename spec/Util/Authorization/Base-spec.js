@@ -4,7 +4,7 @@ describe("Util / Authorization / Base", function() {
 	var user = {role: "manager", id: 3};
 
 	beforeEach(function() {
-		
+
 		Ability = new SJsL.Authorization(user);
 
 		Ability.setRules(function(user) {
@@ -44,7 +44,6 @@ describe("Util / Authorization / Base", function() {
 			});
 		});
 	});
-
 
 	it("exists", function() {
 	   expect(user).toBeTruthy();
