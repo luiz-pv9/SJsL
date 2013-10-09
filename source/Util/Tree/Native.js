@@ -60,11 +60,13 @@
     }
 
     SJsL.NativeTree.prototype.nodeSetId = function(node, id) {
+        
         node[this.uniqueField] = id;
         return node;
     }
 
     SJsL.NativeTree.prototype.duplicate = function(id) {
+
         var node = this.find(id);
         var newNode = node.deepClone();
         this.nodeUpdateId(newNode);
@@ -73,12 +75,14 @@
     }
 
     SJsL.NativeTree.prototype.remove = function(id) {
+
         var node = this.find(id);
         this.nodeChildren(this.nodeParent(node)).remove(node);
         return node;
     }
 
     SJsL.NativeTree.prototype.moveNode = function(fromId, toId) {
+
         var node = this.remove(fromId);
         this.nodeChildren(this.find(toId)).push(node);
         return this;
@@ -91,6 +95,7 @@
         if(self.nodeHasChildren(node)) {
 
             self.nodeChildren(node).each(function(node) {
+
                 self.nodeUpdateId(node);
             });
         }
@@ -104,6 +109,7 @@
         }
 
         var self = this;
+        // The parent of the node is the one that contains it
         var parent = this.findBy(function(n) {
 
             return self.nodeChildren(n).contains(node);
@@ -113,8 +119,10 @@
     }
 
     SJsL.NativeTree.prototype.flatten = function() {
+
         var list = [];
         this.each(function(node) {
+
             list.push(node);
         });
         return list;
