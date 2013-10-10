@@ -8,6 +8,7 @@
 		this.can = {
 
 			read: function(subject, fn) {
+
 				self.permissions.read.push({
 					subject: subject,
 					fn: fn 
@@ -71,6 +72,13 @@
 
 						return rule.subject === subject;
 					});
+
+					// If there is an "all" in any of the actions (read, edit, etc)
+					// Allow everything for that action
+					if(rules.find(function(rule) {
+
+						return rule.subject.toLowerCase() === 'all';
+					})) { return true; }
 
 					if(rule) {
 
