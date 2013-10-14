@@ -66,4 +66,61 @@ describe("Util / Authorization / Base", function() {
 		expect(user.can.read("Phones")).toBe(true);
 		expect(user.can.read("Phones", {type: "Apple"})).toBe(false);
 	});
+
+	describe("Custom actions", function() {
+
+		var _user = null;
+		var _auth = null;
+
+		beforeEach(function() {
+			_user = {role: "manager"};
+			_auth = new SJsL.Authorization(_user);
+		});
+
+		it("adds a new element to the hash", function() {
+
+			_auth.addAction("commit");
+			_auth.setRules(function(user){
+
+				this.can.commit("Code");	
+				this.can.commit("Tag", function(tag) {
+					return tag.name !== "foo";
+				});
+
+				this.can.manage("Cats"); // Manage will also allow actions created by the user
+			});
+
+			expect(_user.can.commit("Code")).toBe(true);
+			expect(_user.can.commit("Tag")).toBe(true);
+			expect(_user.can.commit("Tag", {name: "foo"})).toBe(false);
+			expect(_user.can.commit("Cats")).toBe(true);
+		});
+
+	});
+
+	describe("Generics subjects", function() {
+
+		var _user = null;
+		var _auth = null;
+
+		beforeEach(function() {
+			_user = {role: "manager"};
+			_auth = new SJsL.Authorization(_user);
+		});
+
+		it("adds a new element to the hash", function() {
+
+			_auth.setRules(function(user){
+
+				this.can.read("all");
+				this.can.create("none");
+
+			});
+
+			expect(_user.can.read("Cats")).toBe(true);
+			expect(_user.can.create("Documents")).toBe(false);
+		});
+
+	});
+
 });
