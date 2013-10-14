@@ -78,8 +78,6 @@
 			stack = [];
 			stage = [];
 
-			// console.log(results);
-
 			do {
 
 				var token = results.pop();
@@ -100,7 +98,7 @@
 			} while(results.length > 0);
 
 			return stack.pop();
-		} // digest
+		} // calculate
 	}
 
 

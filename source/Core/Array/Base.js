@@ -69,6 +69,7 @@
 	}
 
 	Array.prototype.quickSort = function() {
+		// TODO
 	}
 
 	// Returns the last element from the array and remove it

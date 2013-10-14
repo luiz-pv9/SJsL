@@ -44,17 +44,27 @@
 
 		this.eachRow(function(row) {
 
-			console.log(row);
+			var rowString = "";
+
+			row.each(function(cell) {
+
+				rowString += (cell + " / ");
+			});
+
+			console.log(rowString);
 		});
 	}
 
 	SJsL.Sheet.prototype.rowsCount = function() {
 
 		if (this.matrix.length === 1) {
+
 			if(this.matrix[0].length === 0) {
+
 				return 0;
 			}
 			else {
+
 				return 1;
 			}
 		}
@@ -122,6 +132,7 @@
 		}
 
 		if(row === null || row === void 0) {
+
 			return this.columnAt(col);
 		}
 
@@ -136,8 +147,21 @@
 
 	SJsL.Sheet.prototype.set = function(row, col, value) {
 
-		this.assureRow(row);
-		this.matrix[row][col] = value;
+		if(row && !col) {
+
+			return this.setRow(row, value);
+		}
+		else if(!row && col) {
+
+			return this.setColumn(col, value);
+		}
+		else if(row && col) {
+
+			this.assureRow(row);
+			this.matrix[row][col] = value;
+			return this;
+		}
+
 		return this;
 	}
 
@@ -146,10 +170,10 @@
 		this.matrix.push(row);
 	}
 
-	SJsL.Sheet.prototype.appendColumn = function(col, basedRowIndex) {
+	SJsL.Sheet.prototype.appendColumn = function(column, basedRowIndex) {
 
 		basedRowIndex = basedRowIndex || 0;
-		return this.setColumn(this.matrix[basedRowIndex].length, col);
+		return this.setColumn(this.columnsCount(basedRowIndex), column);
 	}
 
 	SJsL.Sheet.prototype.filterRows = function(fn) {
