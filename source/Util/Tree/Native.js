@@ -64,7 +64,7 @@
         return node;
     }
 
-    SJsL.NativeTree.prototype.duplicate = function(id) {
+    SJsL.NativeTree.prototype.nodeDuplicate = function(id) {
 
         var node = this.find(id);
         var newNode = node.deepClone();
@@ -73,16 +73,16 @@
         return newNode;
     }
 
-    SJsL.NativeTree.prototype.remove = function(id) {
+    SJsL.NativeTree.prototype.nodeRemove = function(id) {
 
         var node = this.find(id);
         this.nodeChildren(this.nodeParent(node)).remove(node);
         return node;
     }
 
-    SJsL.NativeTree.prototype.moveNode = function(fromId, toId) {
+    SJsL.NativeTree.prototype.nodeMove = function(fromId, toId) {
 
-        var node = this.remove(fromId);
+        var node = this.nodeRemove(fromId);
         this.nodeChildren(this.find(toId)).push(node);
         return this;
     }

@@ -93,7 +93,7 @@ describe("Util / Tree / Native", function() {
 
         tree.updateIdRegister();
 
-        var newNode = tree.duplicate(3);
+        var newNode = tree.nodeDuplicate(3);
 
         expect(tree.nodeParent(newNode)).toEqual(
             tree.nodeParent(tree.find(3))
@@ -102,14 +102,14 @@ describe("Util / Tree / Native", function() {
 
     it("remove", function() {
         expect(tree.nodeChildren(tree.find(3)).length).toBe(2);
-        tree.remove(4);
+        tree.nodeRemove(4);
         expect(tree.nodeChildren(tree.find(3)).length).toBe(1);
     });
 
     it("moveNode", function() {
         expect(tree.nodeChildren(tree.find(3)).length).toEqual(2);
         expect(tree.nodeChildren(tree.find(5)).length).toEqual(1);
-        tree.moveNode(6, 3);
+        tree.nodeMove(6, 3);
         expect(tree.nodeChildren(tree.find(3)).length).toEqual(3);
         expect(tree.nodeChildren(tree.find(5)).length).toEqual(0);
     });
