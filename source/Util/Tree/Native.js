@@ -120,7 +120,7 @@
     SJsL.NativeTree.prototype.flatten = function() {
 
         var list = [];
-        this.each(function(node) {
+        this.each(function(node, deep) {
 
             list.push(node);
         });

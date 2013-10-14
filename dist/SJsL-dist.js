@@ -211,6 +211,7 @@ var SJsL = { version: '0.0.3' };
 	}
 
 	Array.prototype.quickSort = function() {
+		// TODO
 	}
 
 	// Returns the last element from the array and remove it
@@ -1148,17 +1149,27 @@ var SJsL = { version: '0.0.3' };
 
 		this.eachRow(function(row) {
 
-			console.log(row);
+			var rowString = "";
+
+			row.each(function(cell) {
+
+				rowString += (cell + " / ");
+			});
+
+			console.log(rowString);
 		});
 	}
 
 	SJsL.Sheet.prototype.rowsCount = function() {
 
 		if (this.matrix.length === 1) {
+
 			if(this.matrix[0].length === 0) {
+
 				return 0;
 			}
 			else {
+
 				return 1;
 			}
 		}
@@ -1226,6 +1237,7 @@ var SJsL = { version: '0.0.3' };
 		}
 
 		if(row === null || row === void 0) {
+
 			return this.columnAt(col);
 		}
 
@@ -1240,8 +1252,21 @@ var SJsL = { version: '0.0.3' };
 
 	SJsL.Sheet.prototype.set = function(row, col, value) {
 
-		this.assureRow(row);
-		this.matrix[row][col] = value;
+		if(row && !col) {
+
+			return this.setRow(row, value);
+		}
+		else if(!row && col) {
+
+			return this.setColumn(col, value);
+		}
+		else if(row && col) {
+
+			this.assureRow(row);
+			this.matrix[row][col] = value;
+			return this;
+		}
+
 		return this;
 	}
 
@@ -1250,10 +1275,10 @@ var SJsL = { version: '0.0.3' };
 		this.matrix.push(row);
 	}
 
-	SJsL.Sheet.prototype.appendColumn = function(col, basedRowIndex) {
+	SJsL.Sheet.prototype.appendColumn = function(column, basedRowIndex) {
 
 		basedRowIndex = basedRowIndex || 0;
-		return this.setColumn(this.matrix[basedRowIndex].length, col);
+		return this.setColumn(this.columnsCount(basedRowIndex), column);
 	}
 
 	SJsL.Sheet.prototype.filterRows = function(fn) {
@@ -1463,8 +1488,6 @@ var SJsL = { version: '0.0.3' };
 			stack = [];
 			stage = [];
 
-			// console.log(results);
-
 			do {
 
 				var token = results.pop();
@@ -1485,7 +1508,7 @@ var SJsL = { version: '0.0.3' };
 			} while(results.length > 0);
 
 			return stack.pop();
-		} // digest
+		} // calculate
 	}
 
 
@@ -1759,7 +1782,7 @@ var SJsL = { version: '0.0.3' };
         return node;
     }
 
-    SJsL.NativeTree.prototype.duplicate = function(id) {
+    SJsL.NativeTree.prototype.nodeDuplicate = function(id) {
 
         var node = this.find(id);
         var newNode = node.deepClone();
@@ -1768,16 +1791,16 @@ var SJsL = { version: '0.0.3' };
         return newNode;
     }
 
-    SJsL.NativeTree.prototype.remove = function(id) {
+    SJsL.NativeTree.prototype.nodeRemove = function(id) {
 
         var node = this.find(id);
         this.nodeChildren(this.nodeParent(node)).remove(node);
         return node;
     }
 
-    SJsL.NativeTree.prototype.moveNode = function(fromId, toId) {
+    SJsL.NativeTree.prototype.nodeMove = function(fromId, toId) {
 
-        var node = this.remove(fromId);
+        var node = this.nodeRemove(fromId);
         this.nodeChildren(this.find(toId)).push(node);
         return this;
     }
@@ -1815,7 +1838,7 @@ var SJsL = { version: '0.0.3' };
     SJsL.NativeTree.prototype.flatten = function() {
 
         var list = [];
-        this.each(function(node) {
+        this.each(function(node, deep) {
 
             list.push(node);
         });
@@ -2043,6 +2066,7 @@ var SJsL = { version: '0.0.3' };
 	var _id = 0;
 
     SJsL.setBaseId = function(id) {
+        
         if(_id < id) {
 
             _id = id;
@@ -2050,36 +2074,59 @@ var SJsL = { version: '0.0.3' };
     }
 
     SJsL.currentId = function() {
+
         return _id;
     }
 
     SJsL._resetId = function(id) {
+
         id = id || 0;
-        _id = 0;
+        _id = id;
     }
 
 	SJsL.generateId = function(prefix) {
+
 		prefix = prefix || "";
         var newId = prefix + (++_id);
-
-        if(+newId) {
-            return +newId;
-        }
-		return newId;
+        return +newId || newId;
 	}
 
 })(SJsL);
 
 ;;(function(SJsL) {
 
-	SJsL.Authorization = function(data) {
+	// --------------------------------------------------------------
+	// Authorization plugin inspired by Ruby on Rails' cancan (ryanb)
+	// --------------------------------------------------------------
+
+	SJsL.Authorization = function(user) {
 
 		var self = this;
-		this.user = data;
+		this.user = user;
 
+		this.addAction = function(action) {
+
+			this.permissions = this.permissions || {};
+			this.can = this.can || {};
+
+			this.permissions[action] = [];
+
+			this.can[action] = function(subject, fn) {
+
+				self.permissions[action].push({
+					subject: subject,
+					fn: fn
+				});
+			}
+		}
+
+		// There are 4 default actions: read, edit, create, delete and manage.
+		// Manage is simply a helper that calls the other four(read, edit, create and delete)
+		// for the subject passed.
 		this.can = {
 
 			read: function(subject, fn) {
+
 				self.permissions.read.push({
 					subject: subject,
 					fn: fn 
@@ -2112,13 +2159,19 @@ var SJsL = { version: '0.0.3' };
 
 			manage: function(subject, fn) {
 
-				this.read(subject, fn);
-				this.edit(subject, fn);
-				this.create(subject, fn);
-				this.delete(subject, fn);
+				var self = this;
+				this.keys().each(function(key) {
+
+					if(key !== 'manage') { // Prevent infinite stack call
+
+						self[key](subject, fn);
+					}
+				});
 			}
 		};
 
+		// This is the hash that will be filled after the user calls the setRules.
+		// It will search for a subject and and allow actions (or not).
 		this.permissions = {
 			read:   [],
 			edit:   [],
@@ -2131,7 +2184,7 @@ var SJsL = { version: '0.0.3' };
 
 			var self = this;
 			fn.call(this, this.user);
-			this.user.can = {};
+			this.user.can = {}; // The 'can' hash is added to the user object passed in the constructor.
 
 			self.permissions.keys().each(function(key) {
 
@@ -2143,6 +2196,22 @@ var SJsL = { version: '0.0.3' };
 
 						return rule.subject === subject;
 					});
+
+					// If there is an "all" in any of the actions (read, edit, etc)
+					// Allow everything for that action
+					if(rules.find(function(rule) {
+
+						return rule.subject.toLowerCase() === 'all';
+					})) { return true; }
+
+					// If there is a "none" in any of the actions (read, edit, etc)
+					// Deny everything for that action (oposite of all)
+					if(rules.find(function(rule) {
+
+						return rule.subject.toLowerCase() === 'none';
+					})) { return false; }
+
+
 
 					if(rule) {
 
