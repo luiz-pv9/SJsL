@@ -29,39 +29,6 @@
 		// Manage is simply a helper that calls the other four(read, edit, create and delete)
 		// for the subject passed.
 		this.can = {
-
-			read: function(subject, fn) {
-
-				self.permissions.read.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
-			edit: function(subject, fn) {
-
-				self.permissions.edit.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
-			create: function(subject, fn) {
-
-				self.permissions.create.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
-			delete: function(subject, fn) {
-
-				self.permissions.delete.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
 			manage: function(subject, fn) {
 
 				var self = this;
@@ -74,6 +41,12 @@
 				});
 			}
 		};
+
+		// Default actions
+		this.addAction("read");
+		this.addAction("edit");
+		this.addAction("create");
+		this.addAction("delete");
 
 		// This is the hash that will be filled after the user calls the setRules.
 		// It will search for a subject and and allow actions (or not).
