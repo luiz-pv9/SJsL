@@ -83,6 +83,19 @@ describe("Util / Sheet / Range", function() {
             expect(range.at(0, 0)).toEqual(10);
             expect(sheet.at(1, 1)).toEqual(10); // reflects in the sheet
         });
+
+        it("reduces to a value", function() {
+
+            var sum = range.reduce(function(memo, val, row, col) {
+
+                if(+val) {
+                    return memo + val;
+                }
+                return memo;
+            }, 0);
+
+            expect(sum).toEqual(990);
+        });
     });
 
 });

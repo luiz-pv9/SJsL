@@ -79,6 +79,16 @@
 		return this;
 	}
 
+	SJsL.Range.prototype.reduce = function(fn, memo) {
+
+		this.eachCell(function(value, row, col) {
+
+			memo = fn(memo, value, row, col);
+		});
+		return memo;
+	}
+
+	SJsL.Range.prototype.foldLeft = SJsL.Range.prototype.reduce; // alias
 
 	SJsL.Range.prototype.set = function(row, col, value) {
 
