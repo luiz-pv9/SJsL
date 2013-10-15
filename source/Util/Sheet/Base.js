@@ -3,15 +3,21 @@
 	var rowsReturn = function(sheet) {
 
 		this.rows     = {};
-		this.sheet    = sheet;
+		this.parentSheet = sheet;
 
 		this.raw = function() {
 
-			if(this._raw.length === 1) {
+			var indexes = this.rows.keys();
+			if(indexes.hasSingleItem()) {
 
-				return this._raw.head();
+				return this.rows[indexes.head()];
 			}
-			return this._raw;
+			var matrix = [];
+			indexes.each(function(index) {
+
+				matrix.push(this.rows[index]);
+			});
+			return matrix;
 		}
 
 		// This is dangerous a function!
@@ -19,27 +25,33 @@
 		// are [1, 3, 4], this function will generate a range from 1 up to 4.
 		this.range = function() {
 
-			var indexesSorted = _.indexes.shallowClone().sort();
-			var start = [indexesSorted.head(), 'full'];
-			var end = [indexesSorted.last(), 'full'];
-			return new SJsL.Range(this.sheet, start, end);
+			var indexes = this.rows.keys();
+			var sortedIndexes = indexes.shallowClone().sort();
+
+			// The start of the first row
+			var start = [sortedIndexes.head(), 0];
+			// The end of the last row
+			var end   = [sortedIndexes.last(), this.rows[sortedIndexes.last()].length];
+
+			return new SJsL.Range(this.parentSheet, start, end);
 		}
 
 		this.sheet = function(preserveIndexes) {
 
-			if(preserveIndexes) {
+			var sheet = new SJsL.Sheet();
 
-				var sheet = new SJsL.Sheet();
-				this.rows.keys().each(function(key) {
+			this.rows.keys().each(function(index) {
 
-					sheet.setRow(key, this.rows[key]);
-				});
-				return sheet;
-			}
-			else {
+				if(preserveIndexes) {
 
-				return new SJsL.Sheet(this._raw);
-			}
+					sheet.setRow(index, this.rows[index]);
+				}
+				else {
+
+					sheet.appendRow(this.rows[index]);
+				}
+			});
+			return sheet;
 		}
 
 		this.indexes = function() {
@@ -53,7 +65,7 @@
 		}
 	}
 
-	rowsReturn.prototype.addRow = function(row, index) {
+	rowsReturn.prototype.addRow = function(index, row) {
 
 		this.rows[index] = row;
 	}
@@ -156,25 +168,11 @@
 		this.matrix.each(fn);
 	}
 
-	SJsL.Sheet.prototype.eachRowWithIndex = function(fn) {
-
-		this.matrix.eachWithIndex(fn);
-	}
-
 	SJsL.Sheet.prototype.eachColumn = function(fn, basedRowIndex) {
 
 		var self = this;
 		basedRowIndex = basedRowIndex || 0;
-		(0).upTo(this.rowAt(basedRowIndex).length, function(colIndex) {
-			fn(self.columnAt(colIndex));
-		});
-	}
-
-	SJsL.Sheet.prototype.eachColumnWithIndex = function(fn, basedRowIndex) {
-
-		var self = this;
-		basedRowIndex = basedRowIndex || 0;
-		(0).upTo(this.rowAt(basedRowIndex).length, function(colIndex) {
+		(0).upTo(this.rowAt(basedRowIndex).length).each(function(colIndex) {
 			fn(self.columnAt(colIndex), colIndex);
 		});
 	}
@@ -184,7 +182,7 @@
 		var self = this;
 		self.eachRowWithIndex(function(row, rowIndex) {
 
-			row.eachWithIndex(function(cell, colIndex) {
+			row.each(function(cell, colIndex) {
 
 				fn(cell, rowIndex, colIndex);
 			});
@@ -201,7 +199,7 @@
 	SJsL.Sheet.prototype.setColumn = function(index, col) {
 
 		var self = this;
-		col.eachWithIndex(function(item, colIndex) {
+		col.each(function(item, colIndex) {
 
 			self.assureRow(colIndex);
 			self.matrix[colIndex][index] = item;
@@ -296,7 +294,7 @@
 		});
 
 		var matrix = new SJsL.Sheet();
-		columns.eachWithIndex(function(col, index) {
+		columns.each(function(col, index) {
 
 			matrix.setColumn(index, col);
 		});
@@ -346,6 +344,11 @@
 			});
 			return !match;
 		});
+	}
+
+	SJsL.Sheet.prototype.range = function(start, end) {
+
+		return new SJsL.Range(this, start, end);
 	}
 
 	SJsL.Sheet.prototype.columnsWhere = function(conditions) {

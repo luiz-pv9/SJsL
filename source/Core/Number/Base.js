@@ -10,10 +10,12 @@
 
 	Number.prototype.upTo = function(end, fn) {
 
+		var list = [];
 		for(var i = this; i < end; i++) {
 
-			fn(i);
+			list.push(i);
 		}
+		return list;
 	}
 
 	Number.prototype.range = function() {

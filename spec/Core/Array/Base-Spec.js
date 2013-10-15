@@ -57,7 +57,7 @@ describe("Core / Array / Base.js", function() {
 		// 3 * 2 = 6 +
 		//        ---
 		//         8
-		[1,2,3].eachWithIndex(function(n, i) {
+		[1,2,3].each(function(n, i) {
 			sum += n * i;
 		});
 		expect(sum).toEqual(8);

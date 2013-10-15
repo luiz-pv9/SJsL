@@ -28,7 +28,7 @@
 
 		var self = this;
 
-		this.tree.eachWithIndex(function(node, index) {
+		this.tree.each(function(node, index) {
 
 			if(node instanceof SJsL.TreeNode) { 
 				node.propagate();

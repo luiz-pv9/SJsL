@@ -85,15 +85,6 @@
 
 		for(var i=0, len=this.length; i<len; i++) {
 
-			fn(this[i]);
-		}
-	}
-
-	// Same as each, but calls the function with a second parameter - the index of the element
-	Array.prototype.eachWithIndex = function(fn) {
-
-		for(var i=0, len=this.length; i<len; i++) {
-
 			fn(this[i], i);
 		}
 	}
@@ -187,6 +178,7 @@
 		return this.length === 1;
 	}
 	Array.prototype.isSingle = Array.prototype.isLonely;
+	Array.prototype.hasSingleItem = Array.prototype.isLonely;
 
 	Array.prototype.isEmpty = function() {
 

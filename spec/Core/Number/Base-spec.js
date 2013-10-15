@@ -17,7 +17,8 @@ describe("Core / Number / Base", function() {
         var i = 0;
 
         // 3, 4, 5
-        (3).upTo(6, function(n) {
+        (3).upTo(6).each(function(n) {
+
             i += n;
         });
 

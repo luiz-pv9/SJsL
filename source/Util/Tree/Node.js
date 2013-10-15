@@ -43,7 +43,7 @@
 
         var self = this;
         var newChildren = [];
-        this.children().eachWithIndex(function(childNode, index) {
+        this.children().each(function(childNode, index) {
 
             // If, by any change, the node is already wrapped in the NodeClass, 
             // skip that.
