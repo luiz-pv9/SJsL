@@ -182,5 +182,16 @@
 		return SJsL.deepClone(this);
 	}
 
+	Array.prototype.isLonely = function() {
+
+		return this.length === 1;
+	}
+	Array.prototype.isSingle = Array.prototype.isLonely;
+
+	Array.prototype.isEmpty = function() {
+
+		return this.length === 0;
+	}
+
 
 })(SJsL);
