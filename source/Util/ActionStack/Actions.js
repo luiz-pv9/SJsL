@@ -1,5 +1,0 @@
-;(function(SJsL) {
-
-    
-
-})(window.SJsL);

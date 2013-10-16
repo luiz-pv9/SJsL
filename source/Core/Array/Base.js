@@ -30,6 +30,11 @@
 		return this;
 	}
 
+	Array.prototype.removeAt = function(index) {
+
+		return this.splice(index, 1)[0];
+	}
+
 	Array.prototype.removeAll = function(e) {
 
 		while(this.contains(e)) {
@@ -38,7 +43,7 @@
 		}
 		return this;
 	}
-
+	
 	// Returns a new array with only the unique elements in this array
 	// If sorted is passed, a much faster algorith runs.
 	Array.prototype.unique = function(sorted) {
@@ -94,8 +99,6 @@
 		if(this.length === 0) return void 0;
 		return this[this.length-1];
 	}
-
-
 
 	// Given an array with N elements, this function returns the last N-1 elements
 	Array.prototype.tail = function() {

@@ -10,19 +10,22 @@
 
 			return rollback.call(this);
 		}
-
-		// Run the commit function
 		commit.call(this);
 	}
 
 	SJsL.ActionStack = function(name) {
 
 		this.name = name;
+		this.Action = Action;
 		this.actionStack = [];
 
 		this.registerAction = function(name, fn) {
 
-			this.actions[name] = fn;
+			var self = this;
+			this.actions[name] = function() {
+
+				return fn.apply(self, arguments);
+			};
 		}
 
 		this.actions = {
@@ -84,18 +87,106 @@
 					return object;
 				};
 				return new Action(commit, rollback);
-			}
+			},
+
+			'changeArrayItens': function(list) {
+
+				var commit = function() {
+
+					this.data["previous"] = list.shallowClone();
+				}
+
+				var rollback = function() {
+
+					var diffList = [];
+					var self = this;
+					list.each(function(e) {
+
+						if(!self.data["previous"].contains(e)) {
+							
+							diffList.push(e);
+						}
+					});
+
+					self.data["previous"].each(function(e) {
+
+						if(!list.contains(e)) {
+							
+							diffList.push(e);
+						}
+					});
+					return diffList;
+				}
+
+				return new Action(commit, rollback);
+			},
+
+			'changeArrayItens!': function(list) {
+
+				var commit = function() {
+
+					this.data["previous"] = list.shallowClone();
+				}
+
+				var rollback = function() {
+
+					var self = this;
+					var indexesToRemove = [];
+					list.each(function(e, index) {
+
+						if(self.data["previous"][index] !== list[index]) {
+
+							indexesToRemove.push(index);
+						}
+					});
+
+					indexesToRemove.each(function(i) {
+						list.removeAt(i);
+					});
+
+					self.data["previous"].each(function(e) {
+
+						if(!list.contains(e)) {
+							
+							list.insertAt(self.data["previous"].indexOf(e), e);
+						}
+					});
+
+					return list;
+				}
+
+				return new Action(commit, rollback);
+			},
 		};
 
-		this.addAction = function(action) {
+		this.getAction = function(actionName) {
 
-			this.actionStack.push(action);
+			return this.actions[actionName];
+		}
+
+		this.push = function() {
+
+			var args = Array.prototype.slice.call(arguments, 0);
+			var action = args[0];
+			args.removeAt(0);
+
+			if('object'.isTypeOf(action)) {
+
+				this.actionStack.push(action);
+			}
+			else if('string'.isTypeOf(action)) {
+
+				var _action = this.getAction(action).apply(void 0, args);
+				this.actionStack.push(_action);
+			}
 		}
 
 		this.undo = function() {
 
 			return this.actionStack.pop().rollback();
 		}
+
+		this.rollback = this.undo;
 	}
 
 })(SJsL);

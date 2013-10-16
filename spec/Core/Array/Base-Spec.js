@@ -104,4 +104,12 @@ describe("Core / Array / Base.js", function() {
 		expect([1,2,3,4].reverse().head()).toEqual(4);
 	});
 
+	it("removeAt", function() {
+		expect([1,2,3,4].removeAt(1)).toEqual(2);
+
+		var list = [1,2,3,4,5];
+		list.removeAt(2);
+		expect(list[2]).toEqual(4);
+	});
+
 });

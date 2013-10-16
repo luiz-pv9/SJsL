@@ -1,82 +1,209 @@
 describe("Util / ActionStack / Base", function() {
 
-    var actionStack = null;
-    beforeEach(function() {
+	var actionStack = null;
+	beforeEach(function() {
 
-        actionStack = new SJsL.ActionStack("carlsen");
-    });
+		actionStack = new SJsL.ActionStack("carlsen");
+	});
 
-    it("exists", function() {
+	it("exists", function() {
 
-        expect(actionStack).toBeTruthy();
-    });
+		expect(actionStack).toBeTruthy();
+	});
 
-    it("has default actions", function() {
+	it("has default actions", function() {
 
-        expect(actionStack.actions).toBeTruthy();
-    });
+		expect(actionStack.actions).toBeTruthy();
+	});
 
-    it("instantiates a default action", function() {
+	it("instantiates a default action", function() {
 
-        expect(actionStack.actions["changeTextValue"]()).toBeTruthy();
-    });
+		expect(actionStack.actions["changeTextValue"]()).toBeTruthy();
+		expect(actionStack.getAction("changeTextValue")()).toBeTruthy();
+	});
 
-    describe("Actions", function() {
+	describe("Actions", function() {
 
 
-        it("changeTextValue", function() {
+		it("changeTextValue", function() {
 
-            var action = actionStack.actions["changeTextValue"]("Anand");
-            actionStack.addAction(action);
-            expect(actionStack.undo()).toEqual("Anand");
-        });
+			var action = actionStack.actions["changeTextValue"]("Anand");
+			actionStack.push(action);
+			expect(actionStack.undo()).toEqual("Anand");
+		});
 
-        it("change object property", function() {
+		it("change object property", function() {
 
-            var dog = {name: "Rex", age: 12};
+			var dog = {name: "Rex", age: 12};
 
-            var action = actionStack.actions["changeObjectProperty"](dog);
-            actionStack.addAction(action);
+			var action = actionStack.actions["changeObjectProperty"](dog);
 
-            dog.name = "Hox";
+			actionStack.push(action);
 
-            expect(actionStack.undo()).toEqual({name: "Rex"});
-        });
+			dog.name = "Hox";
 
-        it("change object property!", function() {
+			expect(actionStack.undo()).toEqual({name: "Rex"});
+		});
 
-            var dog = {name: "Rex", age: 12};
+		it("change object property!", function() {
 
-            var action = actionStack.actions["changeObjectProperty!"](dog);
-            actionStack.addAction(action);
+			var dog = {name: "Rex", age: 12};
 
-            dog.name = "Hox";
+			var action = actionStack.actions["changeObjectProperty!"](dog);
+			actionStack.push(action);
 
-            actionStack.undo();
+			dog.name = "Hox";
 
-            expect(dog.name).toEqual("Rex");
-        });
+			actionStack.undo();
 
-        it("cascades through the changes", function() {
+			expect(dog.name).toEqual("Rex");
+		});
 
-            var dog = {name: "Rex", age: 12};
+		it("cascades through the changes", function() {
 
-            var action = actionStack.actions["changeObjectProperty!"](dog);
-            actionStack.addAction(action);
+			var dog = {name: "Rex", age: 12};
 
-            dog.name = "Hox";
+			var action = actionStack.actions["changeObjectProperty!"](dog);
+			actionStack.push(action);
 
-            var newAction = actionStack.actions["changeObjectProperty!"](dog);
-            actionStack.addAction(newAction);
+			dog.name = "Hox";
 
-            dog.name = "Fux";
+			var newAction = actionStack.actions["changeObjectProperty!"](dog);
+			actionStack.push(newAction);
 
-            expect(dog.name).toEqual("Fux");
-            actionStack.undo();
-            expect(dog.name).toEqual("Hox");
-            actionStack.undo();
-            expect(dog.name).toEqual("Rex");
-        });
-    });
+			dog.name = "Fux";
+
+			expect(dog.name).toEqual("Fux");
+			actionStack.undo();
+			expect(dog.name).toEqual("Hox");
+			actionStack.undo();
+			expect(dog.name).toEqual("Rex");
+		});
+
+		it("creates and pushes an action on the same method", function() {
+
+			var dog = {name: "Rex", age: 12};
+
+			actionStack.push("changeObjectProperty!", dog);
+
+			dog.name = "Foo";
+			actionStack.rollback();
+
+			expect(dog.name).toEqual("Rex");
+		});
+
+		it("changeArrayItens", function() {
+
+			var list = [1,2,3,4,5];
+			actionStack.push("changeArrayItens!", list);
+			list.push(3);
+			actionStack.undo();
+			expect(list.last()).toEqual(5);
+			
+			actionStack.push("changeArrayItens!", list);
+
+			list.remove(2);
+			list.remove(5);
+			actionStack.undo();
+
+			expect(list.length).toEqual(5);
+			expect(list[1]).toEqual(2);
+		});
+
+		describe("Custom actions", function() {
+
+			var animal = null;	
+
+			beforeEach(function() {
+
+				animal = {name: "Bucket", specie: {id: 1, name: "Dog"}};
+			});
+
+			it("adds a custom action", function() {
+
+				actionStack.registerAction("changeSpecie", function(animal) {
+					
+					var commit = function() {
+
+						this.data["previous"] = animal;
+					}
+
+					var rollback = function() {
+
+						if(animal.specie !== this.data["previous".specie]) {
+
+							animal.specie = this.data["previous"].specie;
+						}
+						return animal;
+					}
+					return new this.Action(commit, rollback);
+				});
+
+				expect(actionStack.getAction("changeSpecie")).toBeTruthy();
+			});
+
+			it("registers a custom action", function() {
+
+				actionStack.registerAction("changeSpecie", function(animal) {
+
+					var commit = function() {
+						this.data["previous"] = animal.shallowClone();
+					}
+
+					var rollback = function() {
+
+						if(animal.specie !== this.data["previous"].specie) {
+
+							animal.specie = this.data["previous"].specie;
+						}
+						return animal;
+					}
+					return new this.Action(commit, rollback);
+				});
+
+				actionStack.push("changeSpecie", animal);
+
+				animal.specie = {id: 2, name: "Cat"};
+
+				actionStack.undo();
+
+				expect(animal.specie.id).toEqual(1);
+			});
+
+			it("registers a custom action - Arrays, for example", function() {
+
+				actionStack.registerAction("changeArrayItem", function(list) {
+
+					var commit = function() {
+						this.data["previous"] = list.shallowClone();
+					}
+
+					var rollback = function() {
+
+						var diffList = [];
+						var self = this;
+						list.each(function(e) {
+
+							if(!self.data["previous"].contains(e)) {
+
+								diffList.push(e);
+							}
+						});
+						return diffList;
+					}
+					return new this.Action(commit, rollback);
+				});
+
+				var list = [1,2,3,4];
+				actionStack.push("changeArrayItem", list);
+				list.push(5);
+
+				var diff = actionStack.undo();
+
+				expect(diff.length).toEqual(1);
+				expect(diff.head()).toEqual(5);
+			});
+		});
+	});
 
 });
