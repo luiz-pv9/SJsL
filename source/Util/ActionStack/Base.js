@@ -44,6 +44,14 @@
 				return new Action(commit, rollback);
 			},
 
+			'changeTextValue!': function(text) {
+
+				var commit = function() {
+
+					this.data["previous"] = text;
+				}
+			},
+
 			'changeObjectProperty': function(object) {
 
 				var commit = function() {
@@ -130,27 +138,19 @@
 
 				var rollback = function() {
 
-					var self = this;
-					var indexesToRemove = [];
-					list.each(function(e, index) {
+					var lenData = this.data["previous"].length;
+					var lenList = list.length;
 
-						if(self.data["previous"][index] !== list[index]) {
+					this.data["previous"].each(function(e, i) {
 
-							indexesToRemove.push(index);
-						}
+						list[i] = e;
 					});
 
-					indexesToRemove.each(function(i) {
-						list.removeAt(i);
-					});
+					while(lenList - lenData > 0) {
 
-					self.data["previous"].each(function(e) {
-
-						if(!list.contains(e)) {
-							
-							list.insertAt(self.data["previous"].indexOf(e), e);
-						}
-					});
+						list.removeAt(lenList - 1);
+						lenList -= 1;
+					}
 
 					return list;
 				}
