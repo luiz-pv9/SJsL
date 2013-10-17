@@ -44,14 +44,6 @@
 				return new Action(commit, rollback);
 			},
 
-			'changeTextValue!': function(text) {
-
-				var commit = function() {
-
-					this.data["previous"] = text;
-				}
-			},
-
 			'changeObjectProperty': function(object) {
 
 				var commit = function() {
@@ -155,9 +147,8 @@
 
 					return list;
 				}
-
 				return new Action(commit, rollback);
-			},
+			}
 		};
 
 		this.getAction = function(actionName) {
@@ -186,8 +177,6 @@
 
 			return this.actionStack.pop().rollback();
 		}
-
 		this.rollback = this.undo;
 	}
-
 })(SJsL);
