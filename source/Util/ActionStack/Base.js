@@ -108,17 +108,18 @@
 
 					var diffList = [];
 					var self = this;
-					list.each(function(e) {
 
-						if(!self.data["previous"].contains(e)) {
+					list.each(function(e, i) {
+
+						if(self.data["previous"][i] !== list[i]) {
 							
 							diffList.push(e);
 						}
 					});
 
-					self.data["previous"].each(function(e) {
+					self.data["previous"].each(function(e, i) {
 
-						if(!list.contains(e)) {
+						if(self.data["previous"][i] !== list[i]) {
 							
 							diffList.push(e);
 						}
