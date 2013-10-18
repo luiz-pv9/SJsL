@@ -80,7 +80,6 @@ describe("Core / Object / Base", function() {
 
 		// Array of objects
 		obj.allowAttributes(['a', 'b', 'd']);
-
 		expect(obj.keys().length).toEqual(3);
 		expect(obj.c).toEqual(void 0);
 	});
