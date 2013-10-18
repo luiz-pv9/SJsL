@@ -1,48 +1,48 @@
-SJsLDirectives.directive("kudo", [function() {
+// SJsLDirectives.directive("kudo", [function() {
 
-	var templateSmile = [
-	].join(" ");
+// 	var templateSmile = [
+// 	].join(" ");
 
-	var templateStar = [
-	].join(" ");
+// 	var templateStar = [
+// 	].join(" ");
 
-	var templates = {
-		'smile': templateSmile,
-		'star': templateStar
-	};
+// 	var templates = {
+// 		'smile': templateSmile,
+// 		'star': templateStar
+// 	};
 
-	return {
+// 	return {
 
-		restrict: 'E',
-		scope: {
+// 		restrict: 'E',
+// 		scope: {
 
-			afterHover : '=',
-			afterFinish: '=',
-			afterBlur  : '=',
-			hoverTime  : '@'
-		},
-		link: function(scope, elem, attrs) {
+// 			afterHover : '=',
+// 			afterFinish: '=',
+// 			afterBlur  : '=',
+// 			hoverTime  : '@'
+// 		},
+// 		link: function(scope, elem, attrs) {
 
-			var countdown;
-			elem.hover(function() {
+// 			var countdown;
+// 			elem.hover(function() {
 
-				if(scope.afterHover) { scope.afterHover(); }
+// 				if(scope.afterHover) { scope.afterHover(); }
 
-				// TODO: Animate
-				countdown = setTimeout(function() {
+// 				// TODO: Animate
+// 				countdown = setTimeout(function() {
 
-					if(scope.afterFinish) { scope.afterFinish(); }
+// 					if(scope.afterFinish) { scope.afterFinish(); }
 
-				}, scope.hoverTime);
-			});
+// 				}, scope.hoverTime);
+// 			});
 
-			elem.blur(function() {
+// 			elem.blur(function() {
 
-				if(scope.afterBlur) { scope.afterBlur(); }
-				clearTimeout(countdown);
-				// TODO: Reset animation
-			});
-		}
-	}
+// 				if(scope.afterBlur) { scope.afterBlur(); }
+// 				clearTimeout(countdown);
+// 				// TODO: Reset animation
+// 			});
+// 		}
+// 	}
 
-}]);
+// }]);
