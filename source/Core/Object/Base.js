@@ -75,5 +75,4 @@
 		});
 		return self;
 	}
-
 })(SJsL);

@@ -84,4 +84,14 @@ describe("Core / Object / Base", function() {
 		expect(obj.keys().length).toEqual(3);
 		expect(obj.c).toEqual(void 0);
 	});
+
+	it("doesnt work with other objects other than the native", function() {
+
+		// Actually, it works...
+		// Since everything inherits from 'Object'
+
+		// Maybe, JUST MAYBE, the functions that change the native objects
+		// should be abstracted to another object container (like underscore
+		// and jQuery)
+	});
 });
