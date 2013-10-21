@@ -53,7 +53,7 @@ var SJsL = { version: '0.0.3' };
     SJsL.deepCloneObject = function(obj) {
 
         var newObject = {};
-        obj.keys().each(function(prop) {
+        SJsL.keys(obj).each(function(prop) {
 
             if('array'.isTypeOf(obj[prop])) {
 
@@ -84,7 +84,7 @@ var SJsL = { version: '0.0.3' };
     SJsL.shallowCloneObject = function(obj) {
 
         var newObject = {};
-        obj.keys().each(function(prop) {
+        SJsL.keys(obj).each(function(prop) {
 
             newObject[prop] = obj[prop];
         });
@@ -118,26 +118,74 @@ var SJsL = { version: '0.0.3' };
 
 })(SJsL);;;(function(SJsL) {
 
-	Object.prototype.keys = function(fn) {
+	SJsL.keys = function(obj) {
 
 		if('undefined'.isTypeOf(Object.keys)) {
 
-			for(var prop in this) {
+			var keys = [];
+			for(var prop in obj) {
 
-				fn(prop);
+				keys.push(prop);
 			}
+			return keys;
 		}
-		return Object.keys(this);
+		return Object.keys(obj);
 	};
 
-	Object.prototype.shallowClone = function() {
+	SJsL.removeAttribute = function(object, attributeName) {
 
-		return SJsL.shallowClone(this);
+		delete object[attributeName];	
+		return object;
 	}
 
-	Object.prototype.deepClone = function() {
+	SJsL.removeAttributes = function() {
 
-		return SJsL.deepClone(this);
+		var obj = arguments[0];
+		if('array'.isTypeOf(arguments[1])) {
+
+			var self = this;
+			arguments[1].each(function(attrName) {
+
+				SJsL.removeAttribute(obj, attrName);
+			});
+		}
+		else {
+
+			for(var i = 1; i < arguments.length; i++) {
+
+				SJsL.removeAttribute(obj, arguments[i]);
+			}		
+		}
+	}
+
+	SJsL.allowAttributes = function() {
+
+		var obj = arguments[0];
+		var allowedAttributes = [];
+		var currentAttributes = SJsL.keys(obj);
+		var self = this;
+		if('array'.isTypeOf(arguments[1])) {
+
+			arguments[1].each(function(attrName) {
+
+				allowedAttributes.push(attrName);
+			});
+		}
+		else {
+
+			for(var i = 1; i < arguments.length; i++) {
+
+				allowedAttributes.push(arguments[i]);
+			}
+		}
+		currentAttributes.each(function(attr) {
+
+			if(!allowedAttributes.contains(attr)) {
+
+				SJsL.removeAttribute(obj, attr);
+			}
+		});
+		return self;
 	}
 
 })(SJsL);;;(function(SJsL) {
@@ -172,6 +220,11 @@ var SJsL = { version: '0.0.3' };
 		return this;
 	}
 
+	Array.prototype.removeAt = function(index) {
+
+		return this.splice(index, 1)[0];
+	}
+
 	Array.prototype.removeAll = function(e) {
 
 		while(this.contains(e)) {
@@ -180,7 +233,7 @@ var SJsL = { version: '0.0.3' };
 		}
 		return this;
 	}
-
+	
 	// Returns a new array with only the unique elements in this array
 	// If sorted is passed, a much faster algorith runs.
 	Array.prototype.unique = function(sorted) {
@@ -236,8 +289,6 @@ var SJsL = { version: '0.0.3' };
 		if(this.length === 0) return void 0;
 		return this[this.length-1];
 	}
-
-
 
 	// Given an array with N elements, this function returns the last N-1 elements
 	Array.prototype.tail = function() {
@@ -1592,6 +1643,16 @@ var SJsL = { version: '0.0.3' };
 		return this;
 	}
 
+	SJsL.Range.prototype.reduce = function(fn, memo) {
+
+		this.eachCell(function(value, row, col) {
+
+			memo = fn(memo, value, row, col);
+		});
+		return memo;
+	}
+
+	SJsL.Range.prototype.foldLeft = SJsL.Range.prototype.reduce; // alias
 
 	SJsL.Range.prototype.set = function(row, col, value) {
 
@@ -1709,202 +1770,13 @@ var SJsL = { version: '0.0.3' };
 		this.calculate = function(values) {
 
 			var formula = this.originalFormula;
-			values.keys().each(function(key) {
+			SJsL.keys(values).each(function(key) {
 				var value = values[key];
 				formula = formula.replace(key, value);
 			});
 			return new SJsL.ShuntingYard(formula).calculate();
 		}
 	}
-
-})(SJsL);;;(function(SJsL) {
-
-	SJsL.Tree = function(config) {
-
-		config = config || {};
-		this.tree = [];
-		this.uniqueField = config.uniqueField || 'id';
-		this.generateId = config.generateId || false;
-		this.childrenField = config.childrenField || 'children';
-	}
-
-	SJsL.Tree.prototype.setData = function(tree) {
-
-		if(SJsL.typeOf(tree) === 'array') {
-
-			this.tree = tree;
-		} 
-		else {
-
-			this.tree = [tree];
-		}
-		return this;
-	}
-
-	// Loops through each node of the tree.
-	// If the node is raw data, it gets wrapped in the TreeNode class.
-	SJsL.Tree.prototype.propagate = function(subtree) {
-
-		var self = this;
-
-		this.tree.each(function(node, index) {
-
-			if(node instanceof SJsL.TreeNode) { 
-				node.propagate();
-				return; 
-			}
-
-			if(self.generateId) {
-
-				node[self.uniqueField] = SJsL.uniqueId();
-			}
-
-			node = new SJsL.TreeNode(self, node);
-			self.tree[index] = node;
-			node.propagate();
-		});
-
-
-		self.assignParentIds();
-		return self;
-	}
-
-	SJsL.Tree.prototype.toNative = function(subtree) {
-
-		var self = this;
-		var container = [];
-		subtree = subtree || this.tree;
-		subtree.each(function(node) {
-
-			// Backup
-			var nodeChildren = node.data.children;
-
-			// Remove the children, infinite recursion in the deep clone
-			delete node.data.children;
-
-			// Clone the node
-			var newNode = node.data.deepClone();
-
-			// Restore the children
-			node.data[self.childrenField] = nodeChildren;
-
-			if(node.hasChildren()) {
-
-				var children = self.toNative(node.children());
-				newNode[self.childrenField] = children;
-			}
-
-			container.push(newNode);
-		});
-
-		return container;
-	}
-
-	// Loops through each node in the tree and assign the attribute ParentId to
-	// each one of them.
-	SJsL.Tree.prototype.assignParentIds = function(subtree, id) {
-
-		var self = this;
-		subtree = subtree || self.tree;
-		id = id || null;
-		subtree.each(function(node) {
-
-			node.parentId = id;
-			if(node.hasChildren()) {
-
-				self.assignParentIds(node.children(), node.id);
-			}
-		});
-
-		return self;
-	}
-
-	SJsL.Tree.prototype.search = function(fn) {
-
-		var list = [];
-		this.each(function(node, deep) {
-
-			if(fn(node, deep)) {
-
-				list.push(node);
-			}
-		});
-		return list;
-	}
-
-	SJsL.Tree.prototype.each = function(fn, subtree, deep) {
-
-		var self = this;
-		subtree = subtree || self.tree;
-		deep = deep || 0;
-		subtree.each(function(node) {
-
-			// Calls the callback
-			fn(node.data, deep);
-
-			if(node.hasChildren()) {
-
-				self.each(fn, node.children(), deep + 1);
-			}
-
-		});
-	}
-
-	SJsL.Tree.prototype.eachWrapped = function(fn, subtree, deep) {
-
-		var self = this;
-		subtree = subtree || self.tree;
-		deep = deep || 0;
-		subtree.each(function(node) {
-
-			// Calls the callback
-			fn(node, deep);
-
-			if(node.hasChildren()) {
-
-				self.eachWrapped(fn, node.children(), deep + 1);
-			}
-
-		});
-	}
-
-	SJsL.Tree.prototype.find = function(id, wrapped, subtree) {
-
-		wrapped = wrapped || false;
-		var self = this;
-		subtree = subtree || self.tree;
-		for(var i = 0; i < subtree.length; i++) {
-
-			if(subtree[i].id === id) {
-
-				if(wrapped)
-					return subtree[i];
-				else
-					return subtree[i].data;
-			}
-			else {
-
-				if(subtree[i].hasChildren()) {
-
-					var item = this.find(id, wrapped, subtree[i].children());
-					if(item) return item;
-				}
-			}
-		}
-		return null;
-	}
-
-	SJsL.Tree.prototype.clone = function() {
-		
-		var newTree = this.toNative().deepClone();
-		return new SJsL.Tree({
-
-			childrenField: this.childrenField,
-			uniqueField: this.uniqueField,
-			generateId: this.generateId
-		}).setData(newTree).propagate();
-	}
-
 
 })(SJsL);;;(function(SJsL) {
 
@@ -1975,7 +1847,7 @@ var SJsL = { version: '0.0.3' };
     SJsL.NativeTree.prototype.nodeDuplicate = function(id) {
 
         var node = this.find(id);
-        var newNode = node.deepClone();
+        var newNode = SJsL.deepClone(node);
         this.nodeUpdateId(newNode);
         this.nodeChildren(this.nodeParent(node)).push(newNode);
         return newNode;
@@ -2114,141 +1986,7 @@ var SJsL = { version: '0.0.3' };
         return new SJsL.NativeTree({
             uniqueField: this.uniqueField,
             childrenField: this.childrenField
-        }).setData(this.tree.deepClone());
-    }
-
-})(SJsL);;;(function(SJsL) {
-
-    SJsL.TreeNode = function(tree, node) {
-
-        node = node || {};
-        this.tree = tree;
-        this.data = node;
-        this.id = node.id;
-
-        if(this.tree.generateId) {
-            this.id = SJsL.generateId();
-        }
-    };
-
-    SJsL.TreeNode.prototype.setData = function(data) {
-
-
-        if(data[this.tree.uniqueField]) {
-
-            this.id = data[this.tree.uniqueField];
-        }
-        else {
-
-            this.id = SJsL.generateId();
-        }
-
-        this.data = data;
-
-        if(data[this.tree.childrenField]) {
-            this.propagate();
-        }
-        return this;
-    }
-
-    SJsL.TreeNode.prototype.set = SJsL.TreeNode.prototype.setData;
-
-    SJsL.TreeNode.prototype.assureChildNotUndefined = function() {
-
-        this.data[this.tree.childrenField] = this.data[this.tree.childrenField] || [];
-    }
-
-    SJsL.TreeNode.prototype.propagate = function() {
-
-        var self = this;
-        var newChildren = [];
-        this.children().each(function(childNode, index) {
-
-            // If, by any change, the node is already wrapped in the NodeClass, 
-            // skip that.
-            if(childNode instanceof SJsL.TreeNode) { 
-
-                childNode.propagate();
-                return;
-            }
-
-            var newNode = new SJsL.TreeNode(self.tree, childNode);
-
-            if(newNode.hasChildren()) {
-
-                newNode.propagate();
-            }
-
-            self.children()[index] = newNode;
-        });
-        return self;
-    }
-
-    SJsL.TreeNode.prototype.hasChildren = function() {
-
-        return this.childrenCount() > 0;
-    }
-
-    SJsL.TreeNode.prototype.childrenCount = function() {
-
-        this.assureChildNotUndefined();
-        return this.children().length;
-    }
-
-    SJsL.TreeNode.prototype.children = function() {
-        this.assureChildNotUndefined(); 
-        return this.data[this.tree.childrenField];
-    }
-
-    SJsL.TreeNode.prototype.addChild = function(node) {
-
-        this.assureChildNotUndefined();
-        var newNode = new SJsL.TreeNode(this.tree, node);
-        newNode.parentId = this.id;
-        this.children().push(newNode);
-        return this;
-    }
-
-    SJsL.TreeNode.prototype.removeChild = function(node) {
-
-        if('number'.isTypeOf(node)) {
-
-            node = this.tree.find(node, true);
-        }
-        else if('object'.isTypeOf(node) && !(node instanceof SJsL.TreeNode)) {
-
-            node = this.children().filter(function(n) {
-
-                return n.data === node;
-            }).head();
-        }
-        this.children().remove(node);
-        return this;
-    }
-
-    SJsL.TreeNode.prototype.isRoot = function() {
-        return !this.parentId;
-    }
-
-    SJsL.TreeNode.prototype.parent = function(wrapped) {
-
-        if(this.isRoot()) {
-            
-            return null;
-        }
-        return this.tree.find(this.parentId, wrapped);
-    }
-
-    SJsL.TreeNode.prototype.subTree = function() {
-
-        var tree = new SJsL.Tree({
-            uniqueField: this.tree.uniqueField,
-            generateId: this.tree.generateId,
-            childrenField: this.tree.childrenField
-        });
-
-        tree.setData(this.data);
-        return tree.propagate();
+        }).setData(SJsL.deepClone(this.tree));
     }
 
 })(SJsL);;;(function(SJsL) {
@@ -2314,43 +2052,10 @@ var SJsL = { version: '0.0.3' };
 		// Manage is simply a helper that calls the other four(read, edit, create and delete)
 		// for the subject passed.
 		this.can = {
-
-			read: function(subject, fn) {
-
-				self.permissions.read.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
-			edit: function(subject, fn) {
-
-				self.permissions.edit.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
-			create: function(subject, fn) {
-
-				self.permissions.create.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
-			delete: function(subject, fn) {
-
-				self.permissions.delete.push({
-					subject: subject,
-					fn: fn 
-				});
-			},
-
 			manage: function(subject, fn) {
 
 				var self = this;
-				this.keys().each(function(key) {
+				SJsL.keys(this).each(function(key) {
 
 					if(key !== 'manage') { // Prevent infinite stack call
 
@@ -2359,6 +2064,12 @@ var SJsL = { version: '0.0.3' };
 				});
 			}
 		};
+
+		// Default actions
+		this.addAction("read");
+		this.addAction("edit");
+		this.addAction("create");
+		this.addAction("delete");
 
 		// This is the hash that will be filled after the user calls the setRules.
 		// It will search for a subject and and allow actions (or not).
@@ -2376,7 +2087,7 @@ var SJsL = { version: '0.0.3' };
 			fn.call(this, this.user);
 			this.user.can = {}; // The 'can' hash is added to the user object passed in the constructor.
 
-			self.permissions.keys().each(function(key) {
+			SJsL.keys(self.permissions).each(function(key) {
 
 				var rules = self.permissions[key];
 
