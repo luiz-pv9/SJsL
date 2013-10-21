@@ -48,14 +48,14 @@
 
 				var commit = function() {
 
-					this.data["previous"] = object.shallowClone();
+					this.data["previous"] = SJsL.shallowClone(object);
 				};
 
 				var rollback = function() {
 
 					var diff = {};
 					var self = this;
-					object.keys().each(function(key) {
+					SJsL.keys(object).each(function(key) {
 
 						if(object[key] !== self.data["previous"][key]) {
 
@@ -71,13 +71,13 @@
 
 				var commit = function() {
 
-					this.data["previous"] = object.shallowClone();
+					this.data["previous"] = SJsL.shallowClone(object);
 				};
 
 				var rollback = function() {
 
 					var self = this;
-					object.keys().each(function(key) {
+					SJsL.keys(object).each(function(key) {
 
 						if(object[key] !== self.data["previous"][key]) {
 
@@ -93,7 +93,7 @@
 
 				var commit = function() {
 
-					this.data["previous"] = list.shallowClone();
+					this.data["previous"] = SJsL.shallowClone(list);
 				}
 
 				var rollback = function() {

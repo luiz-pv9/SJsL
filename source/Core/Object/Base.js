@@ -1,67 +1,61 @@
 ;(function(SJsL) {
 
-	Object.prototype.keys = function(fn) {
+	SJsL.keys = function(obj) {
 
 		if('undefined'.isTypeOf(Object.keys)) {
 
-			for(var prop in this) {
+			var keys = [];
+			for(var prop in obj) {
 
-				fn(prop);
+				keys.push(prop);
 			}
+			return keys;
 		}
-		return Object.keys(this);
+		return Object.keys(obj);
 	};
 
-	Object.prototype.shallowClone = function() {
+	SJsL.removeAttribute = function(object, attributeName) {
 
-		return SJsL.shallowClone(this);
+		delete object[attributeName];	
+		return object;
 	}
 
-	Object.prototype.deepClone = function() {
+	SJsL.removeAttributes = function() {
 
-		return SJsL.deepClone(this);
-	}
-
-	Object.prototype.removeAttribute = function(attributeName) {
-
-		delete this[attributeName];	
-		return this;
-	}
-
-	Object.prototype.removeAttributes = function() {
-
-		if('array'.isTypeOf(arguments[0])) {
+		var obj = arguments[0];
+		if('array'.isTypeOf(arguments[1])) {
 
 			var self = this;
-			arguments[0].each(function(attrName) {
+			arguments[1].each(function(attrName) {
 
-				self.removeAttribute(attrName);
+				SJsL.removeAttribute(obj, attrName);
 			});
 		}
 		else {
 
-			for(var i = 0; i < arguments.length; i++) {
+			for(var i = 1; i < arguments.length; i++) {
 
-				this.removeAttribute(arguments[i]);
+				SJsL.removeAttribute(obj, arguments[i]);
 			}		
 		}
 	}
 
-	Object.prototype.allowAttributes = function() {
+	SJsL.allowAttributes = function() {
 
+		var obj = arguments[0];
 		var allowedAttributes = [];
-		var currentAttributes = this.keys();
+		var currentAttributes = SJsL.keys(obj);
 		var self = this;
-		if('array'.isTypeOf(arguments[0])) {
+		if('array'.isTypeOf(arguments[1])) {
 
-			arguments[0].each(function(attrName) {
+			arguments[1].each(function(attrName) {
 
 				allowedAttributes.push(attrName);
 			});
 		}
 		else {
 
-			for(var i = 0; i < arguments.length; i++) {
+			for(var i = 1; i < arguments.length; i++) {
 
 				allowedAttributes.push(arguments[i]);
 			}
@@ -70,9 +64,10 @@
 
 			if(!allowedAttributes.contains(attr)) {
 
-				self.removeAttribute(attr);
+				SJsL.removeAttribute(obj, attr);
 			}
 		});
 		return self;
 	}
+
 })(SJsL);

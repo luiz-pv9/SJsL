@@ -67,7 +67,7 @@
     SJsL.NativeTree.prototype.nodeDuplicate = function(id) {
 
         var node = this.find(id);
-        var newNode = node.deepClone();
+        var newNode = SJsL.deepClone(node);
         this.nodeUpdateId(newNode);
         this.nodeChildren(this.nodeParent(node)).push(newNode);
         return newNode;
@@ -206,7 +206,7 @@
         return new SJsL.NativeTree({
             uniqueField: this.uniqueField,
             childrenField: this.childrenField
-        }).setData(this.tree.deepClone());
+        }).setData(SJsL.deepClone(this.tree));
     }
 
 })(SJsL);

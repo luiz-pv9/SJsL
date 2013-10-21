@@ -109,7 +109,7 @@
 		this.calculate = function(values) {
 
 			var formula = this.originalFormula;
-			values.keys().each(function(key) {
+			SJsL.keys(values).each(function(key) {
 				var value = values[key];
 				formula = formula.replace(key, value);
 			});

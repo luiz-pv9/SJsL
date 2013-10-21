@@ -147,7 +147,7 @@ describe("Util / ActionStack / Base", function() {
 				actionStack.registerAction("changeSpecie", function(animal) {
 
 					var commit = function() {
-						this.data["previous"] = animal.shallowClone();
+						this.data["previous"] = SJsL.shallowClone(animal);
 					}
 
 					var rollback = function() {
@@ -175,7 +175,7 @@ describe("Util / ActionStack / Base", function() {
 				actionStack.registerAction("changeArrayItem", function(list) {
 
 					var commit = function() {
-						this.data["previous"] = list.shallowClone();
+						this.data["previous"] = SJsL.shallowClone(list);
 					}
 
 					var rollback = function() {

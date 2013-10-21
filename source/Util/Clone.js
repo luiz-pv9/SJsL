@@ -52,7 +52,7 @@
     SJsL.deepCloneObject = function(obj) {
 
         var newObject = {};
-        obj.keys().each(function(prop) {
+        SJsL.keys(obj).each(function(prop) {
 
             if('array'.isTypeOf(obj[prop])) {
 
@@ -83,7 +83,7 @@
     SJsL.shallowCloneObject = function(obj) {
 
         var newObject = {};
-        obj.keys().each(function(prop) {
+        SJsL.keys(obj).each(function(prop) {
 
             newObject[prop] = obj[prop];
         });
