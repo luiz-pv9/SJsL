@@ -57,7 +57,7 @@
 
 					var diff = {};
 					var self = this;
-					SJsL.A.each(SJsL.O.keys(object), function(key) {
+					SJsL.O.eachKey(object, function(key) {
 
 						if(object[key] !== self.data["previous"][key]) {
 
@@ -79,7 +79,7 @@
 				var rollback = function() {
 
 					var self = this;
-					SJsL.A.each(SJsL.O.keys(object), function(key) {
+					SJsL.O.eachKey(object, function(key) {
 
 						if(object[key] !== self.data["previous"][key]) {
 

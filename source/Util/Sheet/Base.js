@@ -7,13 +7,13 @@
 
 		this.raw = function() {
 
-			var indexes = this.rows.keys();
-			if(indexes.hasSingleItem()) {
+			var indexes = this.indexes();
+			if(indexes.length === 1) {
 
 				return this.rows[indexes.head()];
 			}
 			var matrix = [];
-			indexes.each(function(index) {
+			SJsL.A.each(indexes, function(index) {
 
 				matrix.push(this.rows[index]);
 			});
@@ -25,13 +25,13 @@
 		// are [1, 3, 4], this function will generate a range from 1 up to 4.
 		this.range = function() {
 
-			var indexes = this.rows.keys();
-			var sortedIndexes = indexes.shallowClone().sort();
+			var indexes = this.indexes();
+			var sortedIndexes = SJsL.shallowClone(indexes).sort();
 
 			// The start of the first row
-			var start = [sortedIndexes.head(), 0];
+			var start = [SJsL.A.head(sortedIndexes), 0];
 			// The end of the last row
-			var end   = [sortedIndexes.last(), this.rows[sortedIndexes.last()].length];
+			var end   = [SJsL.A.last(sortedIndexes), this.rows[SJsL.A.last(sortedIndexes)].length];
 
 			return new SJsL.Range(this.parentSheet, start, end);
 		}
@@ -39,8 +39,7 @@
 		this.sheet = function(preserveIndexes) {
 
 			var sheet = new SJsL.Sheet();
-
-			this.rows.keys().each(function(index) {
+			SJsL.O.eachKey(this.rows, function(index) {
 
 				if(preserveIndexes) {
 
@@ -56,12 +55,12 @@
 
 		this.indexes = function() {
 
-			return this.rows.keys();
+			return SJsL.O.keys(this.rows);
 		}
 
 		this.index = function() {
 
-			return this.indexes().head();
+			return SJsL.A.head(this.indexes());
 		}
 	}
 

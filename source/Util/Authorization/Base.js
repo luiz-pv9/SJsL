@@ -32,7 +32,7 @@
 			manage: function(subject, fn) {
 
 				var self = this;
-				SJsL.A.each(SJsL.O.keys(this), function(key) {
+				SJsL.O.eachKey(this, function(key) {
 
 					if(key !== 'manage') { // Prevent infinite stack call
 
@@ -64,7 +64,7 @@
 			fn.call(this, this.user);
 			this.user.can = {}; // The 'can' hash is added to the user object passed in the constructor.
 
-			SJsL.A.each(SJsL.O.keys(self.permissions), function(key) {
+			SJsL.O.eachKey(self.permissions, function(key) {
 
 				var rules = self.permissions[key];
 
