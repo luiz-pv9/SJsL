@@ -18,6 +18,19 @@
 		return Object.keys(obj);
 	};
 
+	O.eachKey = function(obj, fn) {
+
+		A.each(O.keys(obj), fn);
+	}
+
+	O.eachKeyValue = function(obj, fn) {
+
+		A.each(O.keys(obj), function(key) {
+
+			fn(key, obj[key]);
+		});
+	}
+
 	O.removeAttribute = function(object, attributeName) {
 
 		delete object[attributeName];	

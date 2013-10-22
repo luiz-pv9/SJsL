@@ -36,6 +36,28 @@ describe("Core / Object / Base", function() {
 		expect(O.keys(obj).length).toEqual(2);
 	});
 
+	it("eachKey", function() {
+
+		var obj = {a: 1, b: 2, c: 3, d: 4};
+		var keys = "";
+		O.eachKey(obj, function(key) {
+
+			keys += key;
+		});
+		expect(keys).toEqual("abcd");
+	});
+
+	it("eachKeyValue", function() {
+
+		var obj = {a: 1, b: 2, c: 3, d: 4};
+		var sum = 0;
+		O.eachKeyValue(obj, function(key, value) {
+
+			sum += value;
+		});
+		expect(sum).toEqual(10);
+	});
+
 	it("allowAttributes", function() {
 
 		var obj = {a: 20, b: 10, c: 30, d: 40};
