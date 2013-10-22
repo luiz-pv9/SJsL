@@ -41,9 +41,9 @@ describe("Util / Sheet / Range", function() {
             var sum = 0;
             range.eachRow(function(row) {
 
-                if(+row.head()) {
+                if(+SJsL.A.head(row)) {
 
-                    sum += +row.head();
+                    sum += +SJsL.A.head(row);
                 }
             });
             expect(sum).toEqual(220);
@@ -55,7 +55,7 @@ describe("Util / Sheet / Range", function() {
             var sum = 0 ;
             range.eachColumn(function(col) {
 
-                sum += col.head();                
+                sum += SJsL.A.head(col);
             });
             expect(sum).toEqual(90);
         });

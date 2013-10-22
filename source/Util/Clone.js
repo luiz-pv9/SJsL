@@ -2,12 +2,12 @@
 
     SJsL.deepClone = function(arg) {
 
-        if('array'.isTypeOf(arg)) {
+        if(SJsL.isArray(arg)) {
 
             return SJsL.deepCloneArray(arg);
         } 
 
-        if('object'.isTypeOf(arg)) {
+        if(SJsL.isObject(arg)) {
 
             return SJsL.deepCloneObject(arg);
         }
@@ -16,12 +16,12 @@
 
     SJsL.shallowClone = function(arg) {
 
-        if('array'.isTypeOf(arg)) {
+        if(SJsL.isArray(arg)) {
 
             return SJsL.shallowCloneArray(arg);
         } 
 
-        if('object'.isTypeOf(arg)) {
+        if(SJsL.isObject(arg)) {
 
             return SJsL.shallowCloneObject(arg);
         }
@@ -31,13 +31,13 @@
     SJsL.deepCloneArray = function(array) {
 
         var newArray = [];
-        array.each(function(item) {
+        SJsL.A.each(array, function(item) {
 
-            if('array'.isTypeOf(item)) {
+            if(SJsL.isArray(item)) {
 
                 newArray.push(SJsL.deepCloneArray(item));
             }
-            else if ('object'.isTypeOf(item)) {
+            if(SJsL.isObject(item)) {
 
                 newArray.push(SJsL.deepCloneObject(item));
             }
@@ -52,13 +52,13 @@
     SJsL.deepCloneObject = function(obj) {
 
         var newObject = {};
-        SJsL.keys(obj).each(function(prop) {
+        SJsL.A.each(SJsL.O.keys(obj), function(prop) {
 
-            if('array'.isTypeOf(obj[prop])) {
+            if(SJsL.isArray(obj[prop])) {
 
                 newObject[prop] = SJsL.deepCloneArray(obj[prop]);
             }
-            else if('object'.isTypeOf(obj[prop])) {
+            if(SJsL.isObject(obj[prop])) {
 
                 newObject[prop] = SJsL.deepCloneObject(obj[prop]);
             }
@@ -73,7 +73,7 @@
     SJsL.shallowCloneArray = function(array) {
         
         var newArray = [];
-        array.each(function(e) {
+        SJsL.A.each(array, function(e) {
 
             newArray.push(e);
         });
@@ -83,7 +83,7 @@
     SJsL.shallowCloneObject = function(obj) {
 
         var newObject = {};
-        SJsL.keys(obj).each(function(prop) {
+        SJsL.A.each(SJsL.O.keys(obj), function(prop) {
 
             newObject[prop] = obj[prop];
         });

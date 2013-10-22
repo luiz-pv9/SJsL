@@ -32,7 +32,7 @@
 			manage: function(subject, fn) {
 
 				var self = this;
-				SJsL.keys(this).each(function(key) {
+				SJsL.A.each(SJsL.O.keys(this), function(key) {
 
 					if(key !== 'manage') { // Prevent infinite stack call
 
@@ -64,27 +64,27 @@
 			fn.call(this, this.user);
 			this.user.can = {}; // The 'can' hash is added to the user object passed in the constructor.
 
-			SJsL.keys(self.permissions).each(function(key) {
+			SJsL.A.each(SJsL.O.keys(self.permissions), function(key) {
 
 				var rules = self.permissions[key];
 
 				self.user.can[key] = function(subject, instance) {
 
-					var rule = rules.find(function(rule) {
+					var rule = SJsL.A.find(rules, function(rule) {
 
 						return rule.subject === subject;
 					});
 
 					// If there is an "all" in any of the actions (read, edit, etc)
 					// Allow everything for that action
-					if(rules.find(function(rule) {
+					if(SJsL.A.find(rules, function(rule) {
 
 						return rule.subject.toLowerCase() === 'all';
 					})) { return true; }
 
 					// If there is a "none" in any of the actions (read, edit, etc)
 					// Deny everything for that action (oposite of all)
-					if(rules.find(function(rule) {
+					if(SJsL.A.find(rules, function(rule) {
 
 						return rule.subject.toLowerCase() === 'none';
 					})) { return false; }

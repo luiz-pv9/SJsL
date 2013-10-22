@@ -73,9 +73,9 @@
 	// Constructor
 	SJsL.Sheet = function(arg) {
 
-		if('array'.isTypeOf(arg)) {
+		if(SJsL.isArray(arg)) {
 
-			if('array'.isTypeOf(arg[0])) {
+			if(SJsL.isArray(arg[0])) {
 
 				this.matrix = arg;	
 			}
@@ -165,14 +165,16 @@
 
 	SJsL.Sheet.prototype.eachRow = function(fn) {
 
-		this.matrix.each(fn);
+		SJsL.A.each(this.matrix, fn);
 	}
 
 	SJsL.Sheet.prototype.eachColumn = function(fn, basedRowIndex) {
 
 		var self = this;
 		basedRowIndex = basedRowIndex || 0;
-		(0).upTo(this.rowAt(basedRowIndex).length).each(function(colIndex) {
+		var range = SJsL.N.upTo(0, this.rowAt(basedRowIndex).length);
+		SJsL.A.each(range, function(colIndex) {
+
 			fn(self.columnAt(colIndex), colIndex);
 		});
 	}
@@ -199,7 +201,7 @@
 	SJsL.Sheet.prototype.setColumn = function(index, col) {
 
 		var self = this;
-		col.each(function(item, colIndex) {
+		SJsL.A.each(col, function(item, colIndex) {
 
 			self.assureRow(colIndex);
 			self.matrix[colIndex][index] = item;
@@ -294,7 +296,7 @@
 		});
 
 		var matrix = new SJsL.Sheet();
-		columns.each(function(col, index) {
+		SJsL.A.each(columns, function(col, index) {
 
 			matrix.setColumn(index, col);
 		});
@@ -308,14 +310,15 @@
 	// Rows where the third element equals foo will pass the test
 	SJsL.Sheet.prototype.rowsWhere = function(conditions) {
 
-		if('object'.isTypeOf(conditions)) {
+		if(SJsL.isObject(conditions)) {
+
 			conditions = [conditions];
 		}
 
 		return this.filterRows(function(row) {
 
 			var match = true;
-			conditions.each(function(condition) {
+			SJsL.A.each(conditions, function(condition) {
 
 				if(row[condition.index] !== condition.value) {
 
@@ -328,14 +331,15 @@
 
 	SJsL.Sheet.prototype.rowsWhereNot = function(conditions) {
 
-		if('object'.isTypeOf(conditions)) {
+		if(SJsL.isObject(conditions)) {
+
 			conditions = [conditions];
 		}
 
 		return this.filterRows(function(row) {
 
 			var match = true;
-			conditions.each(function(condition) {
+			SJsL.A.each(conditions, function(condition) {
 
 				if(row[condition.index] !== condition.value) {
 
@@ -353,7 +357,7 @@
 
 	SJsL.Sheet.prototype.columnsWhere = function(conditions) {
 
-		if('object'.isTypeOf(conditions)) {
+		if(SJsL.isObject(conditions)) {
 
 			conditions = [conditions];
 		}
@@ -362,7 +366,7 @@
 		return this.filterColumns(function(col) {
 
 			var match = true;
-			conditions.each(function(condition) {
+			SJsL.A.each(conditions, function(condition) {
 
 				if(col[condition.index] !== condition.value) {
 
@@ -375,7 +379,7 @@
 
 	SJsL.Sheet.prototype.columnsWhereNot = function(conditions) {
 
-		if('object'.isTypeOf(conditions)) {
+		if(SJsL.isObject(conditions)) {
 
 			conditions = [conditions];
 		}
@@ -384,7 +388,7 @@
 		return this.filterColumns(function(col) {
 
 			var match = true;
-			conditions.each(function(condition) {
+			SJsL.A.each(conditions, function(condition) {
 
 				if(col[condition.index] !== condition.value) {
 
@@ -397,7 +401,7 @@
 
 	SJsL.Sheet.prototype.clone = function() {
 
-		return new SJsL.Sheet(this.matrix.deepClone());	
+		return new SJsL.Sheet(SJsL.deepClone(this.matrix));	
 	};
 
 

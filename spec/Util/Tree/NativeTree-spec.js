@@ -2,6 +2,7 @@ describe("Util / Tree / Native", function() {
     
     var rawTree = null;
     var tree = null;
+    var A = SJsL.A;
 
     beforeEach(function() {
         rawTree = {
@@ -51,7 +52,7 @@ describe("Util / Tree / Native", function() {
             return node.name == "Lula";
         });
 
-        expect(nodes.head().id).toEqual(4);
+        expect(A.head(nodes).id).toEqual(4);
     });
 
     it("each", function() {

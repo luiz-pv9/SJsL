@@ -1,14 +1,17 @@
 ;(function(SJsL) {
 	'use strict';
 
+	SJsL.A = SJsL.A || {};
+	var A = SJsL.A;
+
 	// --
 	// All those functions work with an array of objects
 	// --
 
 	// Given an attribute, returns an array with all the values extracted from the objects
-	Array.prototype.pluck = function(attr) {
+	A.pluck = function(arr, attr) {
 
-		return this.map(function(e) {
+		return A.map(arr, function(e) {
 
 			return e[attr];
 		});
@@ -16,31 +19,31 @@
 
 	// For each element in the array, the function passed is called and the return value
 	// for that function is sotered in another array, and the new array is returned
-	Array.prototype.map = function(fn) {
+	A.map = function(arr, fn) {
 
 		var list = [];
-		this.each(function(e) {
+		A.each(arr, function(e) {
 
 			list.push(fn(e));
 		})
 		return list;
 	}
 
-	Array.prototype.foldLeft = function(fn, memo) {
+	A.foldLeft = function(arr, fn, memo) {
 
-		this.each(function(e) {
+		A.each(arr, function(e) {
 
 			memo = fn(memo, e);
 		});
 		return memo;
 	}
 
-	Array.prototype.reduce = Array.prototype.foldLeft;
+	A.reduce = A.foldLeft;
 
-	Array.prototype.search = function(fn) {
+	A.search = function(arr, fn) {
 
 		var list = [];
-		this.each(function(e) {
+		A.each(arr, function(e) {
 
 			if(fn(e)) {
 
@@ -50,24 +53,24 @@
 		return list;
 	}
 
-	Array.prototype.find = function(fn) {
+	A.find = function(arr, fn) {
 
-		for(var i = 0; i < this.length; i++) {
+		for(var i = 0; i < arr.length; i++) {
 
-			if(fn(this[i])) {
+			if(fn(arr[i])) {
 				
-				return this[i];
+				return arr[i];
 			}
 		}
 		return null;
 	}
 
-	Array.prototype.filter = Array.prototype.search;
+	A.filter = A.search;
 
-	Array.prototype.outNested = function(attr) {
+	A.outNested = function(arr, attr) {
 
 		var obj = {};
-		this.each(function(e) {
+		A.each(arr, function(e) {
 
 			obj[e[attr]] = obj[e[attr]] || [];
 			obj[e[attr]].push(e);
@@ -79,7 +82,7 @@
 	// Parameter (attr) is the attribute to sort the array by.
 	// If a minus sign ("-") is passed in fron of the attribute - for example "-name",
 	// the array will be sorted in reverse order by the attribute
-	Array.prototype.nativeSortBy = function(attr) {
+	A.nativeSortBy = function(arr, attr) {
 
 		var dynamicSort = function(attr) {
 
@@ -95,13 +98,13 @@
 				return result * sortOrder;
 			}
 		}
-		return this.sort(dynamicSort(attr)); 
+		return arr.sort(dynamicSort(attr)); 
 	}
 	
 	// Runs a bubble sort algorithm to sort the array
-	Array.prototype.bubbleSortBy = function(attr) {
+	A.bubbleSortBy = function(arr, attr) {
 
-		var list = this.deepClone();
+		var list = SJsL.deepClone(arr);
 		var reverse = (attr.indexOf("-") === 0);
 		var len = list.length, i, j, stop, temp;
 

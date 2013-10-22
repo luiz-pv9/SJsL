@@ -1,5 +1,7 @@
 ;(function(SJsL) {
 
+	var A = SJsL.A;
+
 	var Action = function(commit, rollback) {
 
 		this.id = SJsL.generateId();
@@ -55,7 +57,7 @@
 
 					var diff = {};
 					var self = this;
-					SJsL.keys(object).each(function(key) {
+					SJsL.A.each(SJsL.O.keys(object), function(key) {
 
 						if(object[key] !== self.data["previous"][key]) {
 
@@ -77,7 +79,7 @@
 				var rollback = function() {
 
 					var self = this;
-					SJsL.keys(object).each(function(key) {
+					SJsL.A.each(SJsL.O.keys(object), function(key) {
 
 						if(object[key] !== self.data["previous"][key]) {
 
@@ -126,7 +128,7 @@
 
 				var commit = function() {
 
-					this.data["previous"] = list.shallowClone();
+					this.data["previous"] = SJsL.shallowClone(list);
 				}
 
 				var rollback = function() {
@@ -134,14 +136,14 @@
 					var lenData = this.data["previous"].length;
 					var lenList = list.length;
 
-					this.data["previous"].each(function(e, i) {
+					SJsL.A.each(this.data["previous"], function(e, i) {
 
 						list[i] = e;
 					});
 
 					while(lenList - lenData > 0) {
 
-						list.removeAt(lenList - 1);
+						SJsL.A.removeAt(list, lenList - 1);
 						lenList -= 1;
 					}
 
@@ -160,13 +162,13 @@
 
 			var args = Array.prototype.slice.call(arguments, 0);
 			var action = args[0];
-			args.removeAt(0);
+			A.removeAt(args, 0);
 
-			if('object'.isTypeOf(action)) {
+			if(SJsL.isObject(action)) {
 
 				this.actionStack.push(action);
 			}
-			else if('string'.isTypeOf(action)) {
+			else if(SJsL.isString(action)) {
 
 				var _action = this.getAction(action).apply(void 0, args);
 				this.actionStack.push(_action);

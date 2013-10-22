@@ -1,5 +1,7 @@
 ;(function(SJsL) {
 
+    var A = SJsL.A;
+
     SJsL.NativeTree = function(config) {
 
         this.tree = [];
@@ -9,7 +11,7 @@
 
     SJsL.NativeTree.prototype.setData = function(tree) {
 
-        if(SJsL.typeOf(tree) === 'array') {
+        if(SJsL.isArray(tree)) {
 
             this.tree = tree;
         } 
@@ -22,7 +24,7 @@
 
     SJsL.NativeTree.prototype.updateIdRegister = function() {
 
-        var highest = this.flatten().pluck(this.uniqueField).max();
+        var highest = A.max(A.pluck(this.flatten(), this.uniqueField));
         if(+highest) {
 
             SJsL.setBaseId((+highest) + 1);
@@ -76,7 +78,7 @@
     SJsL.NativeTree.prototype.nodeRemove = function(id) {
 
         var node = this.find(id);
-        this.nodeChildren(this.nodeParent(node)).remove(node);
+        A.remove(this.nodeChildren(this.nodeParent(node)), node);
         return node;
     }
 
@@ -93,7 +95,7 @@
         this.nodeSetId(node, SJsL.generateId());
         if(self.nodeHasChildren(node)) {
 
-            self.nodeChildren(node).each(function(node) {
+            SJsL.A.each(self.nodeChildren(node), function(node) {
 
                 self.nodeUpdateId(node);
             });
@@ -102,7 +104,7 @@
 
     SJsL.NativeTree.prototype.nodeParent = function(node) {
 
-        if('number'.isTypeOf(node)) {
+        if(SJsL.isNumber(node)) {
 
             node = this.find(node); 
         }
@@ -111,7 +113,7 @@
         // The parent of the node is the one that contains it
         var parent = this.findBy(function(n) {
 
-            return self.nodeChildren(n).contains(node);
+            return A.contains(self.nodeChildren(n), node);
         });
 
         return parent;
@@ -147,7 +149,7 @@
         var self = this;
         subtree = subtree || self.tree;
         deep = deep || 0;
-        subtree.each(function(node) {
+        A.each(subtree, function(node) {
 
             fn(node, deep);
             if(self.nodeHasChildren(node)) {

@@ -1,11 +1,13 @@
 describe("Core / Number / Base", function() {
 
+    var N = SJsL.N;
+
     it("times", function() {
 
         var i = 0;
 
         // 0 + 1 + 2
-        (3).times(function(n) {
+        N.times(3, function(n) {
             i += n;
         });
 
@@ -17,23 +19,20 @@ describe("Core / Number / Base", function() {
         var i = 0;
 
         // 3, 4, 5
-        (3).upTo(6).each(function(n) {
-
-            i += n;
-        });
-
-        expect(i).toEqual(12);
+        var arr = N.upTo(3, 6);
+        expect(arr.length).toEqual(3);
+        expect(arr[0]).toEqual(3);
     });
 
     it("range", function() {
 
-        expect((3).range()).toEqual([0,1,2]);
-        expect((-1).range()).toEqual([]);
+        expect(N.range(3)).toEqual([0, 1, 2]);
+        expect(N.range(-1)).toEqual([]);
     });
 
     it("toString", function() {
-        expect((3).toString()).toEqual("3");
-        expect((3).toString("f_")).toEqual("f_3");
+        expect(N.toString(3)).toEqual("3");
+        expect(N.toString(3, "f_")).toEqual("f_3");
     });
 
 });

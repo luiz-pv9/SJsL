@@ -1,123 +1,126 @@
 ;(function(SJsL) {
 	'use strict';
 
+	SJsL.A = {};
+	var A = SJsL.A;
+
 	// Implementing the indexOf function if it doesn't exists
 	// Comparision happens with triple equal sign
 	// Returns -1 if it doesn't find the element
-	if('undefined'.isTypeOf([].indexOf)) {
+	A.indexOf = function(arr, e) {
 
-		Array.prototype.indexOf = function(e) {
-			for(var i=0, len=this.length; i<len; i++) {
+		if(SJsL.isUndefined(Array.prototype.indexOf)) {
+			for(var i=0, len=arr.length; i<len; i++) {
 
-				if(this[i] === e) return i;
+				if(arr[i] === e) return i;
 			}
 			return -1;
 		}
+		return arr.indexOf(e);
 	}
 
 	// Returns true if the element is in the array, false otherwise
-	Array.prototype.contains = function(e) {
+	A.contains = function(arr, e) {
 
-		return this.indexOf(e) !== -1;
+		return A.indexOf(arr, e) !== -1;
 	}
 
+	A.remove = function(arr, e) {
 
-	Array.prototype.remove = function(e) {
-
-		if(this.contains(e)) {
-			this.splice(this.indexOf(e), 1); 	
+		if(A.contains(arr, e)) {
+			arr.splice(A.indexOf(arr, e), 1); 	
 		}
-		return this;
+		return arr;
 	}
 
-	Array.prototype.removeAt = function(index) {
+	A.removeAt = function(arr, index) {
 
-		return this.splice(index, 1)[0];
+		return arr.splice(index, 1)[0];
 	}
 
-	Array.prototype.removeAll = function(e) {
+	A.removeAll = function(arr, e) {
 
-		while(this.contains(e)) {
+		while(A.contains(arr, e)) {
 
-			this.remove(e);
+			A.remove(arr, e);
 		}
-		return this;
+		return arr;
 	}
 	
 	// Returns a new array with only the unique elements in this array
 	// If sorted is passed, a much faster algorith runs.
-	Array.prototype.unique = function(sorted) {
+	A.unique = function(arr, sorted) {
 
 		var list = [];
 		if(sorted) {
 
-			this.each(function(e) {
+			A.each(arr, function(e) {
 
-				if(list.last() !== e) { list.push(e); }
+				if(A.last(list) !== e) { list.push(e); }
 			});
 		}
 		else {
 
-			this.each(function(e) {
+			A.each(arr, function(e) {
 
-				if(!list.contains(e)) { list.push(e); }
+				if(!A.contains(list, e)) { list.push(e); }
 			});
 		}
 		return list;
 	}
 
 	// Adds the element in the array if it doesn't already belongs to it
-	Array.prototype.addUnique = function(e) {
+	A.addUnique = function(arr, e) {
 
-		if(!this.contains(e)) this.push(e);
-		return this;
+		if(!A.contains(arr, e)) arr.push(e);
+		return arr;
 	}
 
-	Array.prototype.quickSort = function() {
+	A.quickSort = function() {
 		// TODO
 	}
 
 	// Returns the last element from the array and remove it
-	Array.prototype.pop = function() {
+	A.pop = function(arr) {
 
-		return this.splice(this.length-1, 1)[0];
+		return arr.splice(this.length-1, 1)[0];
 	}
 
-	Array.prototype.drop = Array.prototype.pop;
+	A.drop = A.pop;
 
 	// For each element in the array, calls the function passed with the next element
-	Array.prototype.each = function(fn) {
+	A.each = function(arr, fn) {
 
-		for(var i=0, len=this.length; i<len; i++) {
+		for(var i=0, len=arr.length; i<len; i++) {
 
-			fn(this[i], i);
+			fn(arr[i], i);
 		}
 	}
 
 	// Returns the lsat element in the array
-	Array.prototype.last = function() {
-		if(this.length === 0) return void 0;
-		return this[this.length-1];
+	A.last = function(arr) {
+		if(arr.length === 0) return void 0;
+		return arr[arr.length-1];
 	}
 
 	// Given an array with N elements, this function returns the last N-1 elements
-	Array.prototype.tail = function() {
+	A.tail = function(arr) {
 
-		if(this.length === 0) return [];
-		if(this.length === 1) return this.slice(1);
-		return this.slice(1, this.length);
+		if(arr.length === 0) return [];
+		if(arr.length === 1) return arr.slice(1);
+		return arr.slice(1, arr.length);
 	}
 
 	// Returns the first element
-	Array.prototype.head = function() {
+	A.head = function(arr) {
 
-		if(this.length === 0) return void 0;
-		return this[0];
+		if(arr.length === 0) return void 0;
+		return arr[0];
 	}
 
-	Array.prototype.first = Array.prototype.head;
+	A.first = A.head;
 
-	Array.prototype.subArray = function(start, end) {
+	A.subArray = function(arr, start, end) {
 
 		var subArray = [];
 		if(!end) {
@@ -128,65 +131,42 @@
 
 		for(; start <= end; start++) {
 
-			subArray.push(this[start]);
+			subArray.push(arr[start]);
 		}
 
 		return subArray;
 	}
 
-	Array.prototype.offsetLeft = function(offset) {
+	A.offsetLeft = function(arr, offset) {
 
-		return this.subArray(offset, this.length);
+		return A.subArray(arr, offset, arr.length);
 	}
 
-	Array.prototype.offsetRight = function(offset) {
+	A.offsetRight = function(arr, offset) {
 
-		return this.subArray(0, (this.length - 1) - offset);
+		return A.subArray(arr, 0, (arr.length - 1) - offset);
 	}
 
-	Array.prototype.offsetBottom = Array.prototype.offsetRight;
-	Array.prototype.offsetTop = Array.prototype.offsetLeft;
+	A.offsetBottom = A.offsetRight;
+	A.offsetTop = A.offsetLeft;
 
-	Array.prototype.insertAt = function(index, e) {
+	A.insertAt = function(arr, index, e) {
 
-		this.splice(index, 0, e);
-		return this;
+		arr.splice(index, 0, e);
+		return arr;
 	}
 
-	Array.prototype.unshift = function(e) {
+	A.unshift = function(arr, e) {
 
-		return this.insertAt(0, e);
+		return A.insertAt(arr, 0, e);
 	}
 
-	Array.prototype.reverse = function() {
+	A.reverse = function(arr) {
 
-		return this.reduce(function(memo, val) {
+		return A.reduce(arr, function(memo, val) {
 			
-			return memo.unshift(val);
+			return A.unshift(memo, val);
 		}, []);
 	}
-
-	Array.prototype.shallowClone = function() {
-		
-		return SJsL.shallowClone(this);	
-	}
-
-	Array.prototype.deepClone = function() {
-
-		return SJsL.deepClone(this);
-	}
-
-	Array.prototype.isLonely = function() {
-
-		return this.length === 1;
-	}
-	Array.prototype.isSingle = Array.prototype.isLonely;
-	Array.prototype.hasSingleItem = Array.prototype.isLonely;
-
-	Array.prototype.isEmpty = function() {
-
-		return this.length === 0;
-	}
-
 
 })(SJsL);

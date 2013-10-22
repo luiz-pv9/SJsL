@@ -2,6 +2,8 @@
 
 	'use strict';
 
+	var A = SJsL.A;
+
 	var dateSeparators = new RegExp(/[.,\/ -]/);
 
 	SJsL.months = {
@@ -178,7 +180,7 @@
 					day  : null
 				};
 
-				rules.each(function(rule) {
+				A.each(rules, function(rule) {
 
 					if(interpreters[rule]) {
 
@@ -258,12 +260,12 @@
 						days: function(interval) {
 							var dates = [self];
 
-							while(dates.last() < upperBound) {
+							while(A.last(dates) < upperBound) {
 
-								dates.push(dates.last().add(interval).days());
+								dates.push(A.last(dates).add(interval).days());
 							}
 
-							if(dates.last() > upperBound) {
+							if(A.last(dates) > upperBound) {
 
 								dates.pop();
 							}
@@ -273,12 +275,12 @@
 						months: function(interval) {
 							var dates = [self];
 
-							while(dates.last() < upperBound) {
+							while(A.last(dates) < upperBound) {
 
-								dates.push(dates.last().add(interval).months());
+								dates.push(A.last(dates).add(interval).months());
 							}
 
-							if(dates.last() > upperBound) {
+							if(A.last(dates) > upperBound) {
 
 								dates.pop();
 							}

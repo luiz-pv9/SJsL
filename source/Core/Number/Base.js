@@ -1,37 +1,35 @@
 ;(function(SJsL) {
 
-	Number.prototype.times = function(fn) {
+	SJsL.N = {};
+	var N = SJsL.N;
 
-		for(var i = 0; i < this; i++) {
+	N.times = function(num, fn) {
+
+		for(var i = 0; i < num; i++) {
 
 			fn(i);	
 		}
 	}
 
-	Number.prototype.upTo = function(end, fn) {
+	N.upTo = function(num, end) {
 
 		var list = [];
-		for(var i = this; i < end; i++) {
+		for(var i = num; i < end; i++) {
 
 			list.push(i);
 		}
 		return list;
 	}
 
-	Number.prototype.range = function() {
+	N.range = function(num) {
 
-		var array = [];
-		for(var i = 0; i < this; i++) {
-
-			array.push(i);
-		}
-		return array;
+		return N.upTo(0, num);
 	}
 
-	Number.prototype.toString = function(prefix) {
+	N.toString = function(num, prefix) {
 		
 		prefix = prefix || '';
-		return prefix + this;
+		return prefix + num;
 	};
 
 })(SJsL);

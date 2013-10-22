@@ -1,8 +1,12 @@
 ;(function(SJsL) {
 
-	SJsL.keys = function(obj) {
+	SJsL.O = {};
+	var O = SJsL.O;
+	var A = SJsL.A;
 
-		if('undefined'.isTypeOf(Object.keys)) {
+	O.keys = function(obj) {
+
+		if(SJsL.isUndefined(Object.keys)) {
 
 			var keys = [];
 			for(var prop in obj) {
@@ -14,41 +18,41 @@
 		return Object.keys(obj);
 	};
 
-	SJsL.removeAttribute = function(object, attributeName) {
+	O.removeAttribute = function(object, attributeName) {
 
 		delete object[attributeName];	
 		return object;
 	}
 
-	SJsL.removeAttributes = function() {
+	O.removeAttributes = function() {
 
 		var obj = arguments[0];
-		if('array'.isTypeOf(arguments[1])) {
+		if(SJsL.isArray(arguments[1])) {
 
 			var self = this;
-			arguments[1].each(function(attrName) {
+			A.each(arguments[1], function(attrName) {
 
-				SJsL.removeAttribute(obj, attrName);
+				O.removeAttribute(obj, attrName);
 			});
 		}
 		else {
 
 			for(var i = 1; i < arguments.length; i++) {
 
-				SJsL.removeAttribute(obj, arguments[i]);
+				O.removeAttribute(obj, arguments[i]);
 			}		
 		}
 	}
 
-	SJsL.allowAttributes = function() {
+	O.allowAttributes = function() {
 
 		var obj = arguments[0];
 		var allowedAttributes = [];
-		var currentAttributes = SJsL.keys(obj);
+		var currentAttributes = O.keys(obj);
 		var self = this;
-		if('array'.isTypeOf(arguments[1])) {
+		if(SJsL.isArray(arguments[1])) {
 
-			arguments[1].each(function(attrName) {
+			A.each(arguments[1], function(attrName) {
 
 				allowedAttributes.push(attrName);
 			});
@@ -60,11 +64,11 @@
 				allowedAttributes.push(arguments[i]);
 			}
 		}
-		currentAttributes.each(function(attr) {
+		A.each(currentAttributes, function(attr) {
 
-			if(!allowedAttributes.contains(attr)) {
+			if(!A.contains(allowedAttributes, attr)) {
 
-				SJsL.removeAttribute(obj, attr);
+				O.removeAttribute(obj, attr);
 			}
 		});
 		return self;

@@ -98,12 +98,12 @@ describe("Util / ActionStack / Base", function() {
 			actionStack.push("changeArrayItens!", list);
 			list.push(3);
 			actionStack.undo();
-			expect(list.last()).toEqual(5);
+			expect(SJsL.A.last(list)).toEqual(5);
 			
 			actionStack.push("changeArrayItens!", list);
 
-			list.remove(2);
-			list.remove(5);
+			SJsL.A.remove(list, 2);
+			SJsL.A.remove(list, 5);
 			actionStack.undo();
 
 			expect(list.length).toEqual(5);
@@ -182,9 +182,9 @@ describe("Util / ActionStack / Base", function() {
 
 						var diffList = [];
 						var self = this;
-						list.each(function(e) {
+						SJsL.A.each(list, function(e) {
 
-							if(!self.data["previous"].contains(e)) {
+							if(!SJsL.A.contains(self.data["previous"], e)) {
 
 								diffList.push(e);
 							}
@@ -201,7 +201,7 @@ describe("Util / ActionStack / Base", function() {
 				var diff = actionStack.undo();
 
 				expect(diff.length).toEqual(1);
-				expect(diff.head()).toEqual(5);
+				expect(SJsL.A.head(diff)).toEqual(5);
 			});
 		});
 	});

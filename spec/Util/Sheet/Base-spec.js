@@ -1,6 +1,6 @@
 describe("Core / Util / Sheet / Base", function() {
 
-
+    var A = SJsL.A;
     var sheet = null;
 
     beforeEach(function() {
@@ -26,21 +26,21 @@ describe("Core / Util / Sheet / Base", function() {
     });
 
     it("rowAt", function() {
-        expect(sheet.rowAt(1).head()).toEqual(10);
-        expect(sheet.rowAt(2).head()).toEqual(100);
+        expect(A.head(sheet.rowAt(1))).toEqual(10);
+        expect(A.head(sheet.rowAt(2))).toEqual(100);
     });
 
     it("columnAt", function() {
-        expect(sheet.columnAt(1).head()).toEqual("b");
-        expect(sheet.columnAt(4).last()).toEqual("iiiiif");
+        expect(A.head(sheet.columnAt(1))).toEqual("b");
+        expect(A.last(sheet.columnAt(4))).toEqual("iiiiif");
     });
 
     it("eachRow", function() {
 
         var sum = 0;
         sheet.eachRow(function(row) {
-            if(+row.head()) {
-                sum += row.head();
+            if(+A.head(row)) {
+                sum += A.head(row);
             }
         });
         expect(sum).toEqual(110);
@@ -49,7 +49,7 @@ describe("Core / Util / Sheet / Base", function() {
     it("eachColumn", function() {
         var concat = "";
         sheet.eachColumn(function(col) {
-            concat += col.head();
+            concat += A.head(col);
         });
         expect(concat).toEqual("abcde");
     });
@@ -60,7 +60,7 @@ describe("Core / Util / Sheet / Base", function() {
             return n * 2;}
         ));
 
-        expect(sheet.rowAt(1).head()).toEqual(20);
+        expect(A.head(sheet.rowAt(1))).toEqual(20);
     });
 
 
@@ -88,7 +88,7 @@ describe("Core / Util / Sheet / Base", function() {
 
     it("at", function() {
 
-        expect(sheet.at(0).head()).toEqual("a");
+        expect(A.head(sheet.at(0))).toEqual("a");
         expect(sheet.at(null, 1)).toEqual(sheet.columnAt(1));
         expect(sheet.at(0, 1)).toEqual("b");
     });
@@ -112,7 +112,7 @@ describe("Core / Util / Sheet / Base", function() {
     it("filterRows", function() {
 
         var newSheet = sheet.filterRows(function(row) {
-            if(+row.head()) {
+            if(+A.head(row)) {
                 return true;
             }
         });
@@ -123,7 +123,7 @@ describe("Core / Util / Sheet / Base", function() {
     it("filterColumns", function() {
 
         var newSheet = sheet.filterColumns(function(col) {
-            if(col.head() === "b" || col.head() === 'c') {
+            if(A.head(col) === "b" || A.head(col) === 'c') {
                 return true;
             }
         });

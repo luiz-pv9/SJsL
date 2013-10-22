@@ -74,7 +74,7 @@
 				stage.push(stack.pop());
 			}
 
-			var results = SJsL.shallowClone(stage).reverse();
+			var results = SJsL.A.reverse(SJsL.shallowClone(stage));
 			stack = [];
 			stage = [];
 
@@ -109,7 +109,7 @@
 		this.calculate = function(values) {
 
 			var formula = this.originalFormula;
-			SJsL.keys(values).each(function(key) {
+			SJsL.A.each(SJsL.O.keys(values), function(key) {
 				var value = values[key];
 				formula = formula.replace(key, value);
 			});

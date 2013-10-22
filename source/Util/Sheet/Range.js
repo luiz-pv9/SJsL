@@ -1,5 +1,8 @@
 ;(function(SJsL) {
 
+	var A = SJsL.A;
+	var N = SJsL.N;
+
 	SJsL.Range = function(sheet, start, end) {
 
 		this.sheet = sheet;
@@ -8,21 +11,23 @@
 		this.start = start;
 		this.end = end;
 
-		this.rowRange = this.start[0].upTo(this.end[0] + 1);
-		this.columnRange = this.start[1].upTo(this.end[1] + 1);
+		this.rowRange = N.upTo(this.start[0], this.end[0] + 1);
+		this.columnRange = N.upTo(this.start[1], this.end[1] + 1);
 
-		this.offsetColumn = this.columnRange.head();
-		this.offsetRow = this.rowRange.head();
+		this.offsetColumn = A.head(this.columnRange);
+		this.offsetRow = A.head(this.rowRange);
 	}
 
 	SJsL.Range.prototype.rowAt = function(index) {
 
-		return this.sheet.rowAt(index).subArray(this.columnRange.head(), this.columnRange.last());
+		return A.subArray(this.sheet.rowAt(index), A.head(this.columnRange), 
+			A.last(this.columnRange));
 	}
 
 	SJsL.Range.prototype.columnAt = function(index) {
 
-		return this.sheet.columnAt(index).subArray(this.rowRange.head(), this.rowRange.last());
+		return A.subArray(this.sheet.columnAt(index), A.head(this.rowRange), 
+			A.last(this.rowRange));
 	}
 
 	SJsL.Range.prototype.at = function(row, col) {
@@ -43,7 +48,7 @@
 
 		var self = this;
 		var _index = 0;
-		self.rowRange.each(function(index) {
+		A.each(self.rowRange, function(index) {
 
 			fn(self.rowAt(index), _index++);
 		});
@@ -54,7 +59,7 @@
 
 		var self = this;
 		var _index = 0;
-		self.columnRange.each(function(index) {
+		A.each(self.columnRange, function(index) {
 
 			fn(self.columnAt(index), _index++);
 		});
@@ -69,7 +74,7 @@
 
 			var _colIndex = 0;
 
-			row.each(function(cell, colIndex) {
+			A.each(row, function(cell, colIndex) {
 
 				fn(cell, _rowIndex, _colIndex++);
 			});
